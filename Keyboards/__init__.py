@@ -1,5 +1,4 @@
-from .Standart import kb_main, create_clicker
-from .Inline import ikb_start
+from .Inline import ikb_start, create_ikb_settings
 
 
-__all__ = ['kb_main', 'create_clicker', 'ikb_start']
+__all__ = ['create_ikb_settings', 'ikb_start']

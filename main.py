@@ -1,15 +1,18 @@
 from aiogram.utils import executor
 from Handlers import dp
-from DataBase import create_table
+from loader import db
+
+
 
 
 async def on_start(_):
     try:
-        create_table()
+        db.create_table_users()
+        db.create_table_users_options()
+        db.create_table_courses()
         print('DB connection.. OK')
     except:
         print('DB connection... FAILURE!!!')
-
     print('Бот запущен!')
 
 

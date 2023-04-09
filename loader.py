@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, Bot
-from aiogram.types import Message
+from DataBase import DataBase
 import os
 
 bot = Bot(token=os.getenv('TOKEN'))
 dp = Dispatcher(bot)
+db = DataBase()
