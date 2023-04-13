@@ -18,6 +18,19 @@ async def start_command(message: Message):
     await bot.send_photo(chat_id=cur_chat, photo=poster,
                          caption=description, reply_markup=ikb_start)
 
+
+@dp.callback_query_handler(main_menu.filter(button='back'))
+async def start_command(call: CallbackQuery):
+    name = call.from_user.first_name
+    poster = config.start_poster
+    cur_chat = call.from_user.id
+    cur_message = call.message.message_id
+    if not db.check_user(cur_chat):
+        db.new_user((cur_chat, name))
+    description = f'Привет, {name}!'
+    await bot.send_photo(chat_id=cur_chat, photo=poster,
+                         caption=description, reply_markup=ikb_start)
+
 @dp.message_handler(content_types='photo')
 async def start_command(message: Message):
     print(message)

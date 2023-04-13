@@ -59,22 +59,25 @@ class DataBase:
         if self.execute(sql, user, fetchone=True):
             return True
 
-    def user_settings(self,tg_id: int):
+    def user_settings(self, tg_id: int):
         user = (tg_id,)
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, user, fetchone=True)
 
-    def change_option_stream(self, tg_id: int):
+    def change_option_stream(self, tg_id: int, option: str):
         parameters = (tg_id,)
-        sql = '''UPDATE users_options SET alerts_stream=IF(alerts_stream=True, False, True), 
-        WHERE tg_id=?'''
+        sql = f'''UPDATE users_options SET alerts_{option} = CASE
+                                                            WHEN alerts_{option} = 'True' THEN 'False'
+                                                                                        ELSE 'True'
+                                                            END WHERE tg_id=?'''
         self.execute(sql, parameters, commit=True)
 
-
-
-
-
-
+    def add_new_course(self, new_course: dict[str, str]):
+        course = (new_course.get('name'), '', new_course.get('desc'), new_course.get('poster'),
+                  new_course.get('url_course'), new_course.get('price'), '', '')
+        sql = '''INSERT INTO courses (name, stream, description, poster, video, price, active,
+        start_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+        self.execute(sql, course, commit=True)
 
     # def insert_new_item(self, my_dict: dict):
     #     item = (my_dict.get('name'), my_dict.get('age'), my_dict.get('city'))

@@ -6,13 +6,13 @@ def create_ikb_settings(my_set: tuple):
     _, stream, courses, news = my_set
     ikb_settings = InlineKeyboardMarkup(row_width=1)
 
-    ibtn_stream = InlineKeyboardButton(text=f'Оповещения о стримах DP: {"ON" if stream else "OFF"}',
+    ibtn_stream = InlineKeyboardButton(text=f'Оповещения о стримах DP: {"ON" if stream == "True" else "OFF"}',
                                        callback_data=main_menu.new(menu='settings',
-                                                                   button='all_courses'))
-    ibtn_courses = InlineKeyboardButton(text=f'Оповещения о моих курсах DP: {"ON" if courses else "OFF"}',
+                                                                   button='stream'))
+    ibtn_courses = InlineKeyboardButton(text=f'Оповещения о моих курсах DP: {"ON" if courses == "True" else "OFF"}',
                                         callback_data=main_menu.new(menu='settings',
-                                                                    button='my_courses'))
-    ibtn_news = InlineKeyboardButton(text=f'Оповещения о новостях и акциях DP: {"ON" if news else "OFF"}',
+                                                                    button='courses'))
+    ibtn_news = InlineKeyboardButton(text=f'Оповещения о новостях и акциях DP: {"ON" if news == "True" else "OFF"}',
                                      callback_data=main_menu.new(menu='settings',
                                                                  button='news'))
     ibtn_back = InlineKeyboardButton(text='Назад',

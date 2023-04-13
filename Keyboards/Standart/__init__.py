@@ -1,4 +1,5 @@
 from .main_kb import kb_main
-from .clicker import create_clicker
+from .cancel_fsm import kb_cancel
 
-__all__ = ['kb_main', 'create_clicker']
+
+__all__ = ['kb_main', 'kb_cancel']
