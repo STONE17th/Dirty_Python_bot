@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from Keyboards.Callback import main_menu
 
 
-def create_ikb_settings(my_set: tuple):
+def create_ikb_settings(my_set: tuple) -> InlineKeyboardMarkup:
     _, stream, courses, news = my_set
     ikb_settings = InlineKeyboardMarkup(row_width=1)
 

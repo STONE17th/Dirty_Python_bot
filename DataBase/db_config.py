@@ -30,6 +30,12 @@ class DataBase:
         (tg_id INTEGER PRIMARY KEY, name VARCHAR, courses VARCHAR)'''
         self.execute(sql, commit=True)
 
+    def create_table_tasks(self):
+        sql = '''CREATE TABLE IF NOT EXISTS tasks 
+        (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_type VARCHAR, 
+        task_level VARCHAR, task_value VARCHAR)'''
+        self.execute(sql, commit=True)
+
     def create_table_courses(self):
         sql = '''CREATE TABLE IF NOT EXISTS courses 
         (course_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,12 +70,13 @@ class DataBase:
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, user, fetchone=True)
 
-    def change_option_stream(self, tg_id: int, option: str):
+    def change_option(self, tg_id: int, option: str):
         parameters = (tg_id,)
         sql = f'''UPDATE users_options SET alerts_{option} = CASE
                                                             WHEN alerts_{option} = 'True' THEN 'False'
                                                                                         ELSE 'True'
-                                                            END WHERE tg_id=?'''
+                                                            END 
+                                                            WHERE tg_id=?'''
         self.execute(sql, parameters, commit=True)
 
     def add_new_course(self, new_course: dict[str, str]):
@@ -78,6 +85,19 @@ class DataBase:
         sql = '''INSERT INTO courses (name, stream, description, poster, video, price, active,
         start_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
         self.execute(sql, course, commit=True)
+
+    def collect_tasks_types(self) -> list[tuple[str]]:
+        sql = '''SELECT task_type FROM tasks'''
+        return self.execute(sql, fetchall=True)
+
+    def add_new_task(self, task: tuple[str]):
+        sql = '''INSERT INTO tasks (task_type, task_level, task_value) VALUES (?, ?, ?)'''
+        self.execute(sql, task, commit=True)
+
+    def select_tasks(self, task_type: str, task_level: str) -> tuple:
+        user = (task_type, task_level)
+        sql = '''SELECT * FROM tasks WHERE task_type=? AND task_level=?'''
+        return self.execute(sql, user, fetchall=True)
 
     # def insert_new_item(self, my_dict: dict):
     #     item = (my_dict.get('name'), my_dict.get('age'), my_dict.get('city'))

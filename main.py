@@ -10,6 +10,7 @@ async def on_start(_):
         db.create_table_users()
         db.create_table_users_options()
         db.create_table_courses()
+        db.create_table_tasks()
         print('DB connection.. OK')
     except:
         print('DB connection... FAILURE!!!')

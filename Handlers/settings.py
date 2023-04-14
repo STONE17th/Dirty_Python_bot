@@ -18,14 +18,14 @@ async def my_settings(call: CallbackQuery):
                                  reply_markup=create_ikb_settings(my_set))
 
 
-@dp.callback_query_handler(main_menu.filter(button='back'))
+@dp.callback_query_handler(main_menu.filter(menu='settings'))
 async def select_settings(call: CallbackQuery):
     cur_button = call.data.split(':')[-1]
     poster = config.start_poster
     cur_chat = call.from_user.id
     cur_message = call.message.message_id
     caption = 'Это твои настройки'
-    db.change_option_stream(cur_chat, cur_button)
+    db.change_option(cur_chat, cur_button)
     my_set = db.user_settings(cur_chat)
     match cur_button:
         case 'stream':

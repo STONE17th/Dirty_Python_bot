@@ -8,3 +8,9 @@ class NewCourse(StatesGroup):
     poster = State()
     quantity = State()
     price = State()
+
+class NewTask(StatesGroup):
+    task_type = State()
+    task_level = State()
+    task_value = State()
+    task_confirm = State()

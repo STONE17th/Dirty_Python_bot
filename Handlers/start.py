@@ -1,5 +1,5 @@
 from loader import *
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 from Keyboards import ikb_start
 import config
 from data import counter
@@ -28,9 +28,10 @@ async def start_command(call: CallbackQuery):
     if not db.check_user(cur_chat):
         db.new_user((cur_chat, name))
     description = f'Привет, {name}!'
-    await bot.send_photo(chat_id=cur_chat, photo=poster,
-                         caption=description, reply_markup=ikb_start)
+    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=description),
+                                 chat_id=cur_chat, message_id=cur_message,
+                                 reply_markup=ikb_start)
 
 @dp.message_handler(content_types='photo')
 async def start_command(message: Message):
-    print(message)
+    print(message.photo[0].file_id)
