@@ -86,9 +86,13 @@ class DataBase:
         start_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
         self.execute(sql, course, commit=True)
 
-    def collect_tasks_types(self) -> list[tuple[str]]:
-        sql = '''SELECT task_type FROM tasks'''
-        return self.execute(sql, fetchall=True)
+    def collect_tasks(self, target: str, task_type: str = None) -> list[tuple[str]]:
+        if not task_type:
+            sql = f'''SELECT {target} FROM tasks'''
+            return self.execute(sql, fetchall=True)
+        else:
+            sql = f'''SELECT {target} FROM tasks WHERE task_type=?'''
+            return self.execute(sql, (task_type,), fetchall=True)
 
     def add_new_task(self, task: tuple[str]):
         sql = '''INSERT INTO tasks (task_type, task_level, task_value) VALUES (?, ?, ?)'''

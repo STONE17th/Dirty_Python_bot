@@ -1,4 +1,5 @@
 start_poster = 'AgACAgIAAxkBAAIIfGQxr850gktv0XtGt5R-VI-AlymiAAJqxjEbCMSQSShmjUk9RTNyAQADAgADcwADLwQ'
 
-
 task_main = 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ'
+
+admin = [1231231234,]

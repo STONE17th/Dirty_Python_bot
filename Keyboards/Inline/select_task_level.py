@@ -6,9 +6,12 @@ from loader import db
 def create_ikb_task_level(task_type: str) -> InlineKeyboardMarkup:
     kb_task_level = InlineKeyboardMarkup(row_width=3)
     ibtn_list = []
-    for task_level in ['easy', 'normal', 'hard']:
+    list_levels = set([level[0] for level in db.collect_tasks('task_level', task_type)])
+    btn_levels = [level for level in ['easy', 'normal', 'hard'] if level in list_levels]
+    for task_level in btn_levels:
         ibtn_list.append(InlineKeyboardButton(text=task_level,
-                                              callback_data=select_task.new(menu='select_task_level', task_type=task_type,
+                                              callback_data=select_task.new(menu='select_task_level',
+                                                                            task_type=task_type,
                                                                             task_level=task_level)))
     ibtn_back = InlineKeyboardButton(text='Назад',
                                      callback_data=main_menu.new(menu='main',
