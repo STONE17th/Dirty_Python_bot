@@ -1,6 +1,7 @@
-from .Inline import ikb_start, ikb_confirm, create_ikb_settings, create_ikb_task_type, create_ikb_task_level, create_ikb_navigation
+from .Inline import ikb_start, create_ikb_confirm, create_ikb_settings, create_ikb_task_type, create_ikb_task_level, create_ikb_navigation, create_ikb_my_courses
 
 
 __all__ = ['create_ikb_settings', 'ikb_start',
-           'ikb_confirm', 'create_ikb_task_type',
-           'create_ikb_task_level', 'create_ikb_navigation']
+           'create_ikb_confirm', 'create_ikb_task_type',
+           'create_ikb_task_level', 'create_ikb_navigation',
+           'create_ikb_my_courses']

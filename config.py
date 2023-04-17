@@ -2,4 +2,6 @@ start_poster = 'AgACAgIAAxkBAAIIfGQxr850gktv0XtGt5R-VI-AlymiAAJqxjEbCMSQSShmjUk9
 
 task_main = 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ'
 
+my_courses = 'AgACAgIAAxkBAAIK4mQ9BWz5vmBL46nMbep2xRpujJrOAAK3xjEbgVnoSVXsuczPdBf8AQADAgADcwADLwQ'
+
 admin = [1231231234,]

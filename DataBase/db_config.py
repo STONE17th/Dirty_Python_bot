@@ -27,7 +27,13 @@ class DataBase:
 
     def create_table_users(self):
         sql = '''CREATE TABLE IF NOT EXISTS users 
-        (tg_id INTEGER PRIMARY KEY, name VARCHAR, courses VARCHAR)'''
+        (tg_id INTEGER PRIMARY KEY, name VARCHAR, courses VARCHAR, classes VARCHAR)'''
+        self.execute(sql, commit=True)
+
+    def create_table_users_options(self):
+        sql = '''CREATE TABLE IF NOT EXISTS users_options 
+        (tg_id INTEGER PRIMARY KEY, alerts_stream VARCHAR,
+        alerts_courses VARCHAR, alerts_news VARCHAR)'''
         self.execute(sql, commit=True)
 
     def create_table_tasks(self):
@@ -39,15 +45,17 @@ class DataBase:
     def create_table_courses(self):
         sql = '''CREATE TABLE IF NOT EXISTS courses 
         (course_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name VARCHAR, stream INT, description VARCHAR,
-        poster VARCHAR, video VARCHAR, price VARCHAR,
+        course_name VARCHAR, table_name VARCHAR, course_desc VARCHAR,
+        poster VARCHAR, course_url VARCHAR, price VARCHAR,
         active VARCHAR, start_date VARCHAR)'''
         self.execute(sql, commit=True)
 
-    def create_table_users_options(self):
-        sql = '''CREATE TABLE IF NOT EXISTS users_options 
-        (tg_id INTEGER PRIMARY KEY, alerts_stream VARCHAR,
-        alerts_courses VARCHAR, alerts_news VARCHAR)'''
+
+    def create_table_custom_course(self, name_table: str):
+        sql = f'''CREATE TABLE IF NOT EXISTS course_{name_table} 
+        (class_id INTEGER PRIMARY KEY AUTOINCREMENT, course_id VARCHAR,
+        class_name VARCHAR, class_desc VARCHAR, class_price VARCHAR,
+        stream_url VARCHAR, video_url VARCHAR, compendium_url VARCHAR)'''
         self.execute(sql, commit=True)
 
     def new_user(self, user: tuple):
@@ -70,6 +78,26 @@ class DataBase:
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, user, fetchone=True)
 
+    def user_courses(self, tg_id: int):
+        sql = '''SELECT courses FROM users WHERE tg_id=?'''
+        courses_list = self.execute(sql, (tg_id,), fetchone=True)[0].split(',')
+        if '' not in courses_list:
+            courses_list = list(map(int, courses_list))
+        sql = '''SELECT course_name, table_name FROM courses WHERE course_id=?'''
+        courses_name = [self.execute(sql, (course_id,), fetchone=True) for course_id in courses_list]
+        print(courses_name)
+        return courses_name
+
+    def user_classes(self, tg_id: int):
+        sql = '''SELECT classes FROM users WHERE tg_id=?'''
+        classes_list = self.execute(sql, (tg_id,), fetchone=True)[0].split(',')
+        if '' not in classes_list:
+            classes_list = list(map(int, classes_list))
+        sql = '''SELECT course_name, table_name FROM courses WHERE course_id=?'''
+        courses_name = [self.execute(sql, (course_id,), fetchone=True) for course_id in classes_list]
+        print(courses_name)
+        return courses_name
+
     def change_option(self, tg_id: int, option: str):
         parameters = (tg_id,)
         sql = f'''UPDATE users_options SET alerts_{option} = CASE
@@ -79,11 +107,13 @@ class DataBase:
                                                             WHERE tg_id=?'''
         self.execute(sql, parameters, commit=True)
 
+
     def add_new_course(self, new_course: dict[str, str]):
-        course = (new_course.get('name'), '', new_course.get('desc'), new_course.get('poster'),
-                  new_course.get('url_course'), new_course.get('price'), '', '')
-        sql = '''INSERT INTO courses (name, stream, description, poster, video, price, active,
-        start_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+        self.create_table_custom_course(new_course.get('table_name'))
+        course = (new_course.get('course_name'), new_course.get('table_name'),new_course.get('course_desc'), new_course.get('poster'),
+                  new_course.get('course_url'), new_course.get('price'), False, new_course.get('start_date'))
+        sql = '''INSERT INTO courses (course_name, table_name, course_desc, poster, course_url, price, active, start_date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
         self.execute(sql, course, commit=True)
 
     def collect_tasks(self, target: str, task_type: str = None) -> list[tuple[str]]:

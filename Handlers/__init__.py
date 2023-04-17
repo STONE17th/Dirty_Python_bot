@@ -3,5 +3,7 @@ from .start import dp
 from .tasks import dp
 from .settings import dp
 from .new_course import dp
+from .user_courses import dp
+from .my_courses import dp
 
 __all__ = ['dp']
