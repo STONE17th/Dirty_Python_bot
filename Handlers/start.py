@@ -33,5 +33,7 @@ async def start_command(call: CallbackQuery):
                                  reply_markup=ikb_start)
 
 @dp.message_handler(content_types='photo')
-async def start_command(message: Message):
+async def start_command(message: Message, admin: bool):
+    print(admin)
+    print(message.from_user.id)
     print(message.photo[0].file_id)

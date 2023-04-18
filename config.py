@@ -4,4 +4,6 @@ task_main = 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T
 
 my_courses = 'AgACAgIAAxkBAAIK4mQ9BWz5vmBL46nMbep2xRpujJrOAAK3xjEbgVnoSVXsuczPdBf8AQADAgADcwADLwQ'
 
-admin = [1231231234,]
+all_courses ='AgACAgIAAxkBAAIK_2Q94LwVd3YK1eAFqmJ4auyag0jGAAJHwjEbgVnwSXEfb5-opDGVAQADAgADcwADLwQ'
+
+admins_id = [409205647]

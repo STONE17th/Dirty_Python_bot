@@ -4,11 +4,13 @@ from aiogram.dispatcher import FSMContext
 from Handlers.States import NewCourse
 from Keyboards.Standart import kb_cancel
 from Keyboards import create_ikb_confirm
+from Keyboards.Callback import main_menu
 
 
-@dp.message_handler(commands=['add_new_course'], state=None)
-async def new_course_catch(message: Message):
-    await message.answer(text='Введите название курса:', reply_markup=kb_cancel)
+# @dp.message_handler(commands=['add_new_course'], state=None)
+@dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)
+async def new_course_catch(call: CallbackQuery):
+    await bot.send_message(call.message.chat.id, 'Введите название курса:', reply_markup=kb_cancel)
     await NewCourse.course_name.set()
 
 

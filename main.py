@@ -1,8 +1,7 @@
 from aiogram.utils import executor
+import MiddleWare
 from Handlers import dp
 from loader import db
-
-
 
 
 async def on_start(_):
@@ -16,5 +15,5 @@ async def on_start(_):
         print('DB connection... FAILURE!!!')
     print('Бот запущен!')
 
-
-executor.start_polling(dp, skip_updates=True, on_startup=on_start)
+MiddleWare.setup(dp)
+executor.start_polling(dp, skip_updates=True, on_startup=on_start)  
