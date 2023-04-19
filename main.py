@@ -14,6 +14,6 @@ async def on_start(_):
     except:
         print('DB connection... FAILURE!!!')
     print('Бот запущен!')
-
-MiddleWare.setup(dp)
-executor.start_polling(dp, skip_updates=True, on_startup=on_start)  
+if __name__ == '__main__':
+    MiddleWare.setup(dp)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_start)

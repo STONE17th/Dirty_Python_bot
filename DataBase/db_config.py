@@ -78,6 +78,15 @@ class DataBase:
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, user, fetchone=True)
 
+    def all_active_courses(self):
+        sql = '''SELECT course_name, table_name FROM courses WHERE active="True"'''
+        return self.execute(sql, fetchall=True)
+
+    def all_classes(self, table_name: str):
+        sql = f'''SELECT * FROM course_{table_name}'''
+        return self.execute(sql, fetchall=True)
+
+
     def user_courses(self, tg_id: int):
         sql = '''SELECT courses FROM users WHERE tg_id=?'''
         courses_list = self.execute(sql, (tg_id,), fetchone=True)[0].split(',')

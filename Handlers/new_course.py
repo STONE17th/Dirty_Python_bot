@@ -9,9 +9,13 @@ from Keyboards.Callback import main_menu
 
 # @dp.message_handler(commands=['add_new_course'], state=None)
 @dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)
-async def new_course_catch(call: CallbackQuery):
-    await bot.send_message(call.message.chat.id, 'Введите название курса:', reply_markup=kb_cancel)
-    await NewCourse.course_name.set()
+async def new_course_catch(call: CallbackQuery, admin: bool):
+    print(admin)
+    if admin:
+        await bot.send_message(call.message.chat.id, 'Введите название курса:', reply_markup=kb_cancel)
+        await NewCourse.course_name.set()
+    else:
+        await bot.send_message(call.message.chat.id, 'Извините, у вас нет прав для этой команды')
 
 
 @dp.message_handler(state=NewCourse.course_name)
