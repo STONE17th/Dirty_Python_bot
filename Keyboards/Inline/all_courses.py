@@ -1,9 +1,9 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from Keyboards.Callback import main_menu, select_task
+from Keyboards.Callback import main_menu, tasks
 from loader import db
 
 
-def create_ikb_all_courses(admin) -> InlineKeyboardMarkup:
+def create_ikb_all_courses(btn_list: list[str], admin: bool) -> InlineKeyboardMarkup:
     ikb_all_courses = InlineKeyboardMarkup(row_width=3)
     button_names = db.all_active_courses()
     ibtn_list = []
@@ -25,7 +25,6 @@ def create_ikb_all_courses(admin) -> InlineKeyboardMarkup:
 def create_ikb_all_classes(table_name: str) -> InlineKeyboardMarkup:
     ikb_all_classes = InlineKeyboardMarkup(row_width=3)
     button_names = db.all_classes(table_name)
-    print(button_names)
     ibtn_list = []
     if None not in button_names:
         ibtn_list = [

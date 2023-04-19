@@ -1,5 +1,5 @@
 import sqlite3
-
+from config import no_lection
 
 class DataBase:
 
@@ -45,17 +45,18 @@ class DataBase:
     def create_table_courses(self):
         sql = '''CREATE TABLE IF NOT EXISTS courses 
         (course_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        course_name VARCHAR, table_name VARCHAR, course_desc VARCHAR,
-        poster VARCHAR, course_url VARCHAR, price VARCHAR,
+        name VARCHAR, table_name VARCHAR, desc VARCHAR,
+        poster VARCHAR, url VARCHAR, price VARCHAR,
         active VARCHAR, start_date VARCHAR)'''
         self.execute(sql, commit=True)
 
 
     def create_table_custom_course(self, name_table: str):
         sql = f'''CREATE TABLE IF NOT EXISTS course_{name_table} 
-        (class_id INTEGER PRIMARY KEY AUTOINCREMENT, course_id VARCHAR,
-        class_name VARCHAR, class_desc VARCHAR, class_price VARCHAR,
-        stream_url VARCHAR, video_url VARCHAR, compendium_url VARCHAR)'''
+        (class_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_name VARCHAR, class_desc VARCHAR,
+        class_poster VARCHAR, video_url VARCHAR, 
+        compendium_url VARCHAR, class_price VARCHAR)'''
         self.execute(sql, commit=True)
 
     def new_user(self, user: tuple):
@@ -66,6 +67,11 @@ class DataBase:
         sql = '''INSERT INTO users_options (tg_id, alerts_stream, alerts_courses, 
         alerts_news) VALUES (?, ?, ?, ?)'''
         self.execute(sql, options, commit=True)
+
+    def select_users(self, **kwargs):
+        sql = '''SELECT tg_id FROM users_options WHERE '''
+        sql, parameters = self.extract_kwargs(sql, kwargs)
+        return self.execute(sql, parameters, fetchall=True)
 
     def check_user(self, tg_id: int):
         user = (tg_id,)
@@ -79,7 +85,7 @@ class DataBase:
         return self.execute(sql, user, fetchone=True)
 
     def all_active_courses(self):
-        sql = '''SELECT course_name, table_name FROM courses WHERE active="True"'''
+        sql = '''SELECT name, table_name FROM courses WHERE active="True"'''
         return self.execute(sql, fetchall=True)
 
     def all_classes(self, table_name: str):
@@ -92,7 +98,7 @@ class DataBase:
         courses_list = self.execute(sql, (tg_id,), fetchone=True)[0].split(',')
         if '' not in courses_list:
             courses_list = list(map(int, courses_list))
-        sql = '''SELECT course_name, table_name FROM courses WHERE course_id=?'''
+        sql = '''SELECT name, table_name FROM courses WHERE course_id=?'''
         courses_name = [self.execute(sql, (course_id,), fetchone=True) for course_id in courses_list]
         print(courses_name)
         return courses_name
@@ -116,14 +122,23 @@ class DataBase:
                                                             WHERE tg_id=?'''
         self.execute(sql, parameters, commit=True)
 
+    def whole_course(self, table_name: str):
+        sql = f'''SELECT * FROM course_{table_name}'''
+        return self.execute(sql, fetchall=True)
+
 
     def add_new_course(self, new_course: dict[str, str]):
-        self.create_table_custom_course(new_course.get('table_name'))
-        course = (new_course.get('course_name'), new_course.get('table_name'),new_course.get('course_desc'), new_course.get('poster'),
-                  new_course.get('course_url'), new_course.get('price'), False, new_course.get('start_date'))
-        sql = '''INSERT INTO courses (course_name, table_name, course_desc, poster, course_url, price, active, start_date) 
+        sql = '''INSERT INTO courses (name, table_name, desc, poster, url, price, active, start_date) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+        course = (new_course.get('name'), new_course.get('table'), new_course.get('desc'), new_course.get('poster'),
+                  new_course.get('url'), new_course.get('price'), 'True', new_course.get('start_date'))
         self.execute(sql, course, commit=True)
+        self.create_table_custom_course(new_course.get('table'))
+        empty_course = (None, None, no_lection, None, None, None)
+        for _ in range(int(new_course.get('quantity'))):
+            sql = f'''INSERT INTO course_{new_course.get('table')} (class_name, class_desc, class_poster,
+            video_url, compendium_url, class_price) VALUES (?, ?, ?, ?, ?, ?)'''
+            self.execute(sql, empty_course, commit=True)
 
     def collect_tasks(self, target: str, task_type: str = None) -> list[tuple[str]]:
         if not task_type:
@@ -142,70 +157,9 @@ class DataBase:
         sql = '''SELECT * FROM tasks WHERE task_type=? AND task_level=?'''
         return self.execute(sql, user, fetchall=True)
 
-    # def insert_new_item(self, my_dict: dict):
-    #     item = (my_dict.get('name'), my_dict.get('age'), my_dict.get('city'))
-    #     sql = '''INSERT INTO goods (name, age, city) VALUES (?, ?, ?)'''
-    #     self.execute(sql, item, commit=True)
-    #
-    # def create_table_basket(self):
-    #     sql = '''CREATE TABLE IF NOT EXISTS basket
-    #     (id_order INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     id_user INTEGER, id_goods INTEGER)'''
-    #     self.execute(sql, commit=True)
-    #
-    # def create_table_purchase(self):
-    #     sql = '''CREATE TABLE IF NOT EXISTS purchase
-    #     (id_order INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     name TEXT, phone_number TEXT, email TEXT,
-    #     shipping TEXT, address TEXT, goods TEXT)'''
-    #     self.execute(sql, commit=True)
-    #
-    # def add_goods(self, goods: dict):
-    #     parameters = (goods.get('g_type'), goods.get('image'), goods.get('name'),
-    #                   goods.get('desc'), goods.get('quantity'), goods.get('price'))
-    #     sql = '''INSERT INTO goods (g_type, image, name, desc, quantity, price)
-    #     VALUES (?, ?, ?, ?, ?, ?)'''
-    #     self.execute(sql, parameters, commit=True)
-    #
-    # def get_goods(self, **kwargs):
-    #     sql = '''SELECT * FROM goods WHERE '''
-    #     sql, parameters = self.extract_kwargs(sql, kwargs)
-    #     return self.execute(sql, parameters, fetchall=True)
-    #
-    # def get_basket(self, **kwargs):
-    #     sql = '''SELECT * FROM basket WHERE '''
-    #     sql, parameters = self.extract_kwargs(sql, kwargs)
-    #     return self.execute(sql, parameters, fetchall=True)
-    #
-    # def add_to_basket(self, id_user: int, id_goods: int):
-    #     parameters = (id_user, id_goods)
-    #     sql = '''INSERT INTO basket (id_user, id_good) VALUES (?, ?)'''
-    #     self.execute(sql, parameters, commit=True)
-    #     parameters = (id_goods,)
-    #     sql = '''UPDATE goods SET quantity = quantity - 1 WHERE id=?'''
-    #     self.execute(sql, parameters, commit=True)
-    #
-    # def remove_from_basket(self, id_order: int, id_goods: int):
-    #     parameters = (id_order,)
-    #     sql = '''DELETE FROM basket WHERE id_order=?'''
-    #     self.execute(sql, parameters, commit=True)
-    #     parameters = (id_goods,)
-    #     sql = '''UPDATE goods SET quantity = quantity + 1 WHERE id=?'''
-    #     self.execute(sql, parameters, commit=True)
-    #
-    # def clear_basket(self, id_user):
-    #     parameters = (id_user,)
-    #     sql = '''DELETE FROM basket WHERE id_user=?'''
-    #     self.execute(sql, parameters, commit=True)
-    #
-    # def add_purchase(self, id_user: int, order: dict, shipping: str):
-    #     sql = '''INSERT INTO purchase (name, phone_number, email, shipping, address, goods)
-    #     VALUES (?, ?, ?, ?, ?, ?)'''
-    #     for goods in self.get_basket(id_user=id_user):
-    #         item = self.get_goods(id=int(goods[2]))
-    #         parameters = (order.get('name'), order.get('phone_number'), order.get('email'),
-    #                       shipping, str(order.get('shipping_address')), str(item[0][3]))
-    #         self.execute(sql, parameters, commit=True)
+    def delete_task(self, task_id: int):
+        sql = '''DELETE FROM tasks WHERE task_id=?'''
+        self.execute(sql, (task_id,), commit=True)
 
     @staticmethod
     def extract_kwargs(sql: str, parameters: dict) -> tuple:

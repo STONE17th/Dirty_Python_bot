@@ -1,6 +1,6 @@
 from loader import *
 from aiogram.types import Message, CallbackQuery, InputMediaPhoto
-from Keyboards import ikb_start, create_ikb_settings
+from Keyboards import create_ikb_settings
 from Keyboards.Callback import main_menu
 import config
 

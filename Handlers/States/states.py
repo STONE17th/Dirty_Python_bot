@@ -2,10 +2,11 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 
 class NewCourse(StatesGroup):
-    course_name = State()
-    table_name = State()
-    course_desc = State()
-    course_url = State()
+    name = State()
+    table = State()
+    quantity = State()
+    desc = State()
+    url = State()
     poster = State()
     price = State()
     start_date = State()
@@ -17,3 +18,17 @@ class NewTask(StatesGroup):
     task_level = State()
     task_value = State()
     task_confirm = State()
+
+class Stream(StatesGroup):
+    name = State()
+    desc = State()
+    poster = State()
+    url = State()
+    confirm = State()
+
+class Announcement(StatesGroup):
+    name = State()
+    desc = State()
+    poster = State()
+    url = State()
+    confirm = State()
