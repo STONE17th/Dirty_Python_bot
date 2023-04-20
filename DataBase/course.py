@@ -62,3 +62,7 @@ class Course(DataBase):
         sql = '''SELECT name, table_name FROM courses WHERE course_id=?'''
         courses = [self.execute(sql, (course_id,), fetchone=True) for course_id in courses_list]
         return courses
+
+    def is_completed(self, table_name: str):
+        sql = f'''SELECT name FROM course_{table_name}'''
+        return any(map(lambda x: bool(x[0]), self.execute(sql, fetchall=True)))

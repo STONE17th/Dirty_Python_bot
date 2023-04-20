@@ -9,7 +9,7 @@ from Misc import MsgToDict
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='edit_class'), state=None)
-async def new_course_catch(admin: bool, msg: MsgToDict, state: FSMContext):
+async def new_lecture_catch(call: CallbackQuery, admin: bool, msg: MsgToDict, state: FSMContext):
     if admin:
         await state.update_data({'table': msg.table})
         await state.update_data({'id': msg.id})
@@ -20,42 +20,42 @@ async def new_course_catch(admin: bool, msg: MsgToDict, state: FSMContext):
 
 
 @dp.message_handler(state=NewLecture.name)
-async def name_catch(message: Message, state: FSMContext):
+async def desc_catch(message: Message, state: FSMContext):
     await state.update_data({'name': message.text})
     await message.answer(text='Введите описание лекции:', reply_markup=kb_cancel)
     await NewLecture.next()
 
 @dp.message_handler(state=NewLecture.desc)
-async def name_catch(message: Message, state: FSMContext):
+async def poster_catch(message: Message, state: FSMContext):
     await state.update_data({'desc': message.text})
     await message.answer(text='Отправьте обложку лекции:', reply_markup=kb_cancel)
     await NewLecture.next()
 
 @dp.message_handler(content_types=['photo', 'text'], state=NewLecture.poster)
-async def name_catch(message: Message, state: FSMContext, msg: MsgToDict):
-    # data = await state.get_data()
-    photo = course_db.poster(msg.table)
+async def video_catch(message: Message, state: FSMContext):
+    data = await state.get_data()
+    photo = course_db.poster(data.get('table'))[0]
     if 'photo' in message:
         photo = message.photo[0].file_id
     await state.update_data({'poster': photo})
     await message.answer(text='Введите ссылку на видео:', reply_markup=kb_cancel)
     await NewLecture.next()
 @dp.message_handler(state=NewLecture.video)
-async def name_catch(message: Message, state: FSMContext):
+async def compendium_catch(message: Message, state: FSMContext):
     await state.update_data({'video': message.text})
     await message.answer(text='Введите ссылку на конспект:', reply_markup=kb_cancel)
     await NewLecture.next()
 
 
 @dp.message_handler(state=NewLecture.compendium)
-async def name_catch(message: Message, state: FSMContext):
+async def price_catch(message: Message, state: FSMContext):
     await state.update_data({'compendium': message.text})
     await message.answer(text='Введите цену за лекцию:', reply_markup=kb_cancel)
     await NewLecture.next()
 
 
 @dp.message_handler(state=NewLecture.price)
-async def name_catch(message: Message, state: FSMContext, msg: MsgToDict):
+async def confirm_catch(message: Message, state: FSMContext, msg: MsgToDict):
     await state.update_data({'price': message.text})
     data = await state.get_data()
     caption = f"Название: {data.get('name')}\nОписание: {data.get('desc')}\n\n" \
@@ -67,7 +67,7 @@ async def name_catch(message: Message, state: FSMContext, msg: MsgToDict):
 
 
 @dp.callback_query_handler(state=NewLecture.confirm)
-async def start_command(call: CallbackQuery, state: FSMContext, msg: MsgToDict):
+async def save_lecture(call: CallbackQuery, state: FSMContext, msg: MsgToDict):
     if call.data.split(':')[-1] == 'yes':
         data = await state.get_data()
         lecture_db.update(data)

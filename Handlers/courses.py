@@ -26,18 +26,18 @@ async def user_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
 async def online_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     course = Course(course_db.select(msg.table))
     desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.classes[msg.id].poster, caption=desc),
+    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation(course.size, msg.table, msg.id, admin))
+                                 reply_markup=create_ikb_class_navigation('online', course.size, msg.table, msg.id, admin))
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='offline'))
 async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     course = Course(course_db.whole(msg.table))
     desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.classes[msg.id].poster, caption=desc),
+    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation(course.size, msg.table, msg.id, admin))
+                                 reply_markup=create_ikb_class_navigation('offline', course.size, msg.table, msg.id, admin))
 
 
 @dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)
@@ -110,7 +110,7 @@ async def confirm_new_course(message: Message, state: FSMContext):
     await state.update_data({'start_date': message.text})
     data = await state.get_data()
     caption = f"Название: {data.get('name')}\n\nНазвание таблицы: {data.get('name')}\n\nПродолжительность: {data.get('quantity')}\n\n" \
-              f"Описание: {data.get('desc')}\n\nРабочая папка: {data.get('url')}\n\nЦена курса: " \
+              f"Описание: {data.get('desc')}\n\nРабочая папка: {data.get('url')}\nТелеграм-чат: {data.get('tg_chat')}\n\nЦена курса: " \
               f"{data.get('price')}\n\nДата начала: {data.get('start_date')}"
     await bot.send_photo(chat_id=message.from_user.id, photo=data.get('poster'), caption=caption,
                          reply_markup=create_ikb_confirm('course', 'confirm'))
