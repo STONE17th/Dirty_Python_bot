@@ -7,10 +7,21 @@ class NewCourse(StatesGroup):
     quantity = State()
     desc = State()
     url = State()
+    tg_chat = State()
     poster = State()
     price = State()
     start_date = State()
     course_confirm = State()
+
+
+class NewLecture(StatesGroup):
+    name = State()
+    desc = State()
+    poster = State()
+    video = State()
+    compendium = State()
+    price = State()
+    confirm = State()
 
 
 class NewTask(StatesGroup):
@@ -19,12 +30,14 @@ class NewTask(StatesGroup):
     task_value = State()
     task_confirm = State()
 
+
 class Stream(StatesGroup):
     name = State()
     desc = State()
     poster = State()
     url = State()
     confirm = State()
+
 
 class Announcement(StatesGroup):
     name = State()

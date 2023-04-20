@@ -1,25 +1,16 @@
-from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher.middlewares import BaseMiddleware
+from aiogram.types import Message, CallbackQuery
 
-from config import admins_id
+from Misc import MsgToDict
+from loader import user_db
 
 
 class Administrator(BaseMiddleware):
     async def on_process_message(self, message: Message, data: dict):
-        for admin in admins_id:
-            if message.from_user.id == admin:
-                data['admin'] = True
-                break
-        else:
-            data['admin'] = False
+        data['admin'] = bool(user_db.is_admin(message.from_user.id))
+        data['msg'] = MsgToDict(message)
+        print(data)
 
     async def on_process_callback_query(self, call: CallbackQuery, data: dict):
-        for admin in admins_id:
-            if call.from_user.id == admin:
-                data['admin'] = True
-                break
-        else:
-            data['admin'] = False
-
-
-           
+        data['admin'] = bool(user_db.is_admin(call.from_user.id))
+        data['msg'] = MsgToDict(call)

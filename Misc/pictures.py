@@ -18,4 +18,3 @@ tasks = {'строки': {'easy': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MA
                     'normal': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ',
                     'hard': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ'}
          }
-admins_id = [409205647]

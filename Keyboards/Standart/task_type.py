@@ -1,6 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from .cancel_fsm import btn_cancel
-from loader import db
 
 
 def create_kb_task_type() -> ReplyKeyboardMarkup:

@@ -1,4 +1,3 @@
-from .states import NewCourse
-from .states import NewTask
+from .states import NewCourse, NewLecture, NewTask
 
-__all__ = ['NewCourse', 'NewTask']
+__all__ = ['NewCourse', 'NewTask', 'NewLecture']
