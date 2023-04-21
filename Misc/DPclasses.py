@@ -26,8 +26,22 @@ class Course:
         self.tg_chat = data[6]
         self.price = int(data[7]) if isinstance(data[7], str) and data[7].isdigit() else 0
         self.start = data[8]
+        self.active = data[9]
         self.lectures = [Lecture(lecture) for lecture in course_db.whole(self.table)]
         self.size = len(self.lectures)
+
+    def info(self):
+        list_lecture = course_db.is_completed(self.table)
+        completed = [1 for i in list_lecture if i == (None,)]
+        finalize = f'{round((self.size - len(completed))/self.size, 2)*100}% ({self.size - len(completed)}/{self.size})'
+        return f'Название курса {self.name}\n\nОписание: {self.desc}\n\n' \
+               f'Стоимость всего курса: {self.price}\nДата старта: {self.start}\nКурс завершен на {finalize}'
+
+    def full_info(self):
+        pass
+
+    def is_active(self):
+        return True if self.active == 'True' else False
 
     def all(self):
         return self.lectures

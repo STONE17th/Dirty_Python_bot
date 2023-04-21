@@ -2,38 +2,39 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 
 from Handlers.States import NewCourse
-from Keyboards import create_ikb_all_courses  # create_ikb_all_classes create_ikb_my_courses,
-from Keyboards import create_ikb_confirm, create_ikb_class_navigation
+from Keyboards import create_ikb_all_courses, create_ikb_confirm, create_ikb_class_navigation, create_ikb_online_course
 from Keyboards.Callback import main_menu, course_navigation
 from Keyboards.Standart import kb_cancel
-from Misc import MsgToDict, Course, pictures
+from Misc import MsgToDict, Course, Lecture, pictures
 from loader import dp, bot, course_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='all_courses'))
 async def user_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     poster = pictures.all_courses
-    btn_list = course_db.all()
+    course_list = course_db.all()
+    print(course_list)
+    course_list = [Course(course) for course in course_list]
     desc = f'{msg.name}, заходи позже. Пока у нас нечего тебе предложить'
-    if btn_list:
+    if course_list:
         desc = f'{msg.name}, это все актуальные курсы на данный момент!'
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_all_courses(btn_list, admin))
+                                 reply_markup=create_ikb_all_courses(course_list, admin))
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='online'))
 async def online_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     course = Course(course_db.select(msg.table))
-    desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
+    desc = course.info()
+    keyboard = create_ikb_online_course(msg, msg.table, msg.id)
     await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
-                                 chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation('online', course.size, msg.table, msg.id, admin))
+                                 chat_id=msg.chat_id, message_id=msg.message_id, reply_markup=keyboard)
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='offline'))
 async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    course = Course(course_db.whole(msg.table))
+    course = Course(course_db.select(msg.table))
     desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
     await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,

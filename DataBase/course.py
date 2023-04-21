@@ -11,7 +11,7 @@ class Course(DataBase):
         (course_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR, table_name VARCHAR, desc VARCHAR,
         poster VARCHAR, cloud_url VARCHAR, tg_chat VARCHAR, price VARCHAR,
-        active VARCHAR, start_date VARCHAR)'''
+        start_date VARCHAR, active VARCHAR)'''
         self.execute(sql, commit=True)
 
     def create_table_lectures(self, name_table: str):
@@ -22,11 +22,11 @@ class Course(DataBase):
         self.execute(sql, commit=True)
 
     def add(self, new_course: dict[str, str]):
-        sql = '''INSERT INTO courses (name, table_name, desc, poster, cloud_url, tg_chat, price, active, start_date) 
+        sql = '''INSERT INTO courses (name, table_name, desc, poster, cloud_url, tg_chat, price, start_date, active) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         course = (new_course.get('name'), new_course.get('table'), new_course.get('desc'),
                   new_course.get('poster'), new_course.get('url'), new_course.get('tg_chat'),
-                  new_course.get('price'), 'True', new_course.get('start_date'))
+                  new_course.get('price'), new_course.get('start_date'), 'True')
         self.execute(sql, course, commit=True)
         self.create_table_lectures(new_course.get('table'))
         empty_course = (None, None, pictures.no_lection, None, None, None)
@@ -40,7 +40,7 @@ class Course(DataBase):
         return self.execute(sql, (table,), fetchone=True)
 
     def all(self):
-        sql = '''SELECT name, table_name, active FROM courses'''
+        sql = '''SELECT * FROM courses'''
         return self.execute(sql, fetchall=True)
 
     def whole(self, table_name: str):
@@ -65,4 +65,18 @@ class Course(DataBase):
 
     def is_completed(self, table_name: str):
         sql = f'''SELECT name FROM course_{table_name}'''
-        return any(map(lambda x: bool(x[0]), self.execute(sql, fetchall=True)))
+        list_completed = self.execute(sql, fetchall=True)
+        return list_completed
+
+    def purchase(self, user_id: int, table: str):
+        sql = '''SELECT courses FROM users WHERE tg_id=?'''
+        courses = self.execute(sql, (user_id,), fetchone=True)
+        if courses != (None,):
+            courses = [course for course in courses]
+        else:
+            courses = []
+        courses.append(table)
+        data = ' '.join(courses)
+        sql = '''UPDATE users SET courses=? WHERE tg_id=?'''
+        params = (data, user_id)
+        self.execute(sql, params, commit=True)

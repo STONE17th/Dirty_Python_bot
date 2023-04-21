@@ -1,14 +1,19 @@
 import os
-from aiogram.types import Message, PreCheckoutQuery, LabeledPrice
+from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, LabeledPrice
 from aiogram.types import ContentType
 from Keyboards.Callback import course_navigation
-from loader import dp, lecture_db
-from Misc import MsgToDict, Lecture
+from loader import dp, lecture_db, course_db
+from Misc import MsgToDict, Lecture, Course
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='purchase'))
-async def purchase(msg: MsgToDict):
-    target_lecture = Lecture(lecture_db.select(msg.table, msg.id))
+async def purchase(call: CallbackQuery, msg: MsgToDict):
+    if msg.id == -1:
+        target_lecture = Course(course_db.select(msg.table))
+        merchandise = msg.table
+    else:
+        target_lecture = Lecture(lecture_db.select(msg.table, msg.id))
+        merchandise = f'{msg.table}:{msg.id}'
     prices = [LabeledPrice(label=f'{target_lecture.name}', amount=target_lecture.price*100)]
 
     await dp.bot.send_invoice(chat_id=msg.my_id,
@@ -17,7 +22,7 @@ async def purchase(msg: MsgToDict):
                               provider_token=os.getenv('P_TOKEN'),
                               currency='RUB',
                               prices=prices,
-                              payload=f'{msg.table}:{msg.id}',
+                              payload=merchandise,
                               start_parameter='purchase')
 @dp.pre_checkout_query_handler()
 async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
@@ -27,5 +32,10 @@ async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
 @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
 async def process_pay(message: Message, msg: MsgToDict):
     my_purchase = message.successful_payment.invoice_payload
-    lecture_db.purchase(msg.my_id, *my_purchase.split(':'))
-    await message.answer(text='Спасибо за покупку!\nДоступ к лекции будет в главном меню')
+    if ':' in my_purchase:
+        lecture_db.purchase(msg.my_id, *my_purchase.split(':'))
+        text = 'лекции'
+    else:
+        course_db.purchase(msg.my_id, my_purchase)
+        text = 'курсу'
+    await message.answer(text=f'Спасибо за покупку!\nДоступ к {text} будет в главном меню (/start)')
