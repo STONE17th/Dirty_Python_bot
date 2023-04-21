@@ -1,39 +1,50 @@
 from aiogram.types import Message, CallbackQuery
-from loader import course_db
+from loader import course_db, lecture_db
 from Misc import pictures
 
 class Lecture:
-    def __init__(self, db_answer: tuple[str]):
-        self.name = db_answer[1]
-        self.desc = db_answer[2]
-        self.poster = db_answer[3]
-        self.video = db_answer[4]
-        self.compendium = db_answer[5]
-        self.price = int(db_answer[6]) if isinstance(db_answer[6], str) and db_answer[6].isdigit() else 0
+    def __init__(self, data: tuple[str] | str):
+        if isinstance(data, str):
+            data = course_db.whole(data.split(':')[0])[int(data.split(':')[1]) + 1]
+        self.name = data[1]
+        self.desc = data[2]
+        self.poster = data[3]
+        self.video = data[4]
+        self.compendium = data[5]
+        self.price = int(data[6]) if isinstance(data[6], str) and data[6].isdigit() else 0
 
     def __str__(self):
         return f'Название: {self.name}\n\nОписание: {self.desc}\n\nВидео: {self.video}\nКонспект: {self.compendium}\n\nЦена: {self.price}'
+    #
+    # def __repr__(self):
+    #     return f'Название: {self.name}\n\nОписание: {self.desc}\n\nВидео: {self.video}\nКонспект: {self.compendium}\n\nЦена: {self.price}'
 
 
 class Course:
-    def __init__(self, data: tuple[str | int]):
-        self.id = data[0]
-        self.name = data[1]
-        self.table = data[2]
-        self.desc = data[3]
-        self.poster = data[4]
-        self.url = data[5]
-        self.tg_chat = data[6]
-        self.price = int(data[7]) if isinstance(data[7], str) and data[7].isdigit() else 0
-        self.start = data[8]
-        self.active = data[9]
-        self.lectures = [Lecture(lecture) for lecture in course_db.whole(self.table)]
-        self.size = len(self.lectures)
+    def __init__(self, data: tuple | str):
+        if isinstance(data, tuple):
+            self.id = data[0]
+            self.name = data[1]
+            self.table = data[2]
+            self.desc = data[3]
+            self.poster = data[4]
+            self.url = data[5]
+            self.tg_chat = data[6]
+            self.price = int(data[7]) if isinstance(data[7], str) and data[7].isdigit() else 0
+            self.start = data[8]
+            self.active = data[9]
+            self.lectures = [Lecture(lecture) for lecture in course_db.whole(self.table)] if self.table != 'custom' else []
+            # self.size = len(self.lectures)
+        else:
+            raise ValueError
+
+    def __str__(self):
+        return '\n'.join(map(str, self.lectures))
 
     def info(self):
         list_lecture = course_db.is_completed(self.table)
         completed = [1 for i in list_lecture if i == (None,)]
-        finalize = f'{round((self.size - len(completed))/self.size, 2)*100}% ({self.size - len(completed)}/{self.size})'
+        finalize = f'{round((len(self.lectures) - len(completed))/len(self.lectures), 2)*100}% ({len(self.lectures) - len(completed)}/{len(self.lectures)})'
         return f'Название курса {self.name}\n\nОписание: {self.desc}\n\n' \
                f'Стоимость всего курса: {self.price}\nДата старта: {self.start}\nКурс завершен на {finalize}'
 
@@ -42,6 +53,9 @@ class Course:
 
     def is_active(self):
         return True if self.active == 'True' else False
+
+    def __len__(self):
+        return len(self.lectures)
 
     def all(self):
         return self.lectures
@@ -52,6 +66,8 @@ class Course:
                    f'\nКонспект: {self.lectures[index].compendium}\n\nЦена: {self.lectures[index].price}'
         return f'Название: {self.lectures[index].name}\n\nОписание: {self.lectures[index].desc}\n\nЦена: {self.lectures[index].price}'
 
+    def add_new(self, target_lecture: str):
+        self.lectures.append(Lecture(target_lecture))
 
 class CurrentTask:
     def __init__(self, task_list: tuple[str]):

@@ -1,16 +1,14 @@
 from aiogram.types import InlineKeyboardButton as IKB, InlineKeyboardMarkup
 from Keyboards.Callback import main_menu, course_navigation
+from Misc import MsgToDict
 from loader import course_db, lecture_db
 
 
-def create_ikb_my_courses(courses, lectures, tg_id: int) -> InlineKeyboardMarkup:
+def create_ikb_my_courses(courses, msg: MsgToDict) -> InlineKeyboardMarkup:
     kb_my_courses = InlineKeyboardMarkup(row_width=2)
     if courses and courses != (None,):
-        btn_courses = [IKB(text=course[0] , callback_data=course_navigation.new(menu='my_courses', table=course[1] , current_id=0)) for course in courses]
+        btn_courses = [IKB(text=course.name, callback_data=course_navigation.new(menu='my_courses', table=course.table, current_id=0)) for course in courses]
         [kb_my_courses.add(btn) for btn in btn_courses]
-    if lectures and lectures != (None,):
-        btn_lectures = IKB(text='Отдельные лекции', callback_data=course_navigation.new(menu='my_lectures', table='', current_id=0))
-        kb_my_courses.add(btn_lectures)
     btn_back = IKB(text='Назад', callback_data=main_menu.new(menu='', button='back'))
     kb_my_courses.add(btn_back)
     return kb_my_courses
