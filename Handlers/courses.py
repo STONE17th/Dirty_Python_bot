@@ -13,7 +13,6 @@ from loader import dp, bot, course_db
 async def user_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     poster = pictures.all_courses
     course_list = course_db.all()
-    print(course_list)
     course_list = [Course(course) for course in course_list]
     desc = f'{msg.name}, заходи позже. Пока у нас нечего тебе предложить'
     if course_list:
@@ -38,7 +37,15 @@ async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
     desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
     await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation('offline', course.size, msg.table, msg.id, admin))
+                                 reply_markup=create_ikb_class_navigation('offline', course.size, msg.table, msg.id,
+                                                                          admin, msg))
+
+
+@dp.callback_query_handler(course_navigation.filter(menu='finalize_course'))
+async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
+    course_db.finalize(msg.table)
+    await call.answer(f'Курс завершен!', show_alert=True)
+    await bot.send_message(msg.my_id, text='Вернуться в главное меню /start')
 
 
 @dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)

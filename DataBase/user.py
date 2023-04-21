@@ -54,3 +54,7 @@ class User(DataBase):
     def course_and_lectures(self, tg_id: int) -> tuple[str]:
         sql = '''SELECT courses, lectures FROM users WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
+
+    def course_and_lectures(self, tg_id: int) -> tuple[str]:
+        sql = '''SELECT courses, lectures FROM users WHERE tg_id=?'''
+        return self.execute(sql, (tg_id,), fetchone=True)

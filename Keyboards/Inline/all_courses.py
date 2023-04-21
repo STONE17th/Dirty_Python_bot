@@ -9,7 +9,11 @@ def create_ikb_all_courses(course_list: list[Course] = [], admin: bool=False) ->
     btn_online = []
     btn_offline = []
     for course in course_list:
-        if course.is_active() and not admin:
+        if admin:
+            btn = IKB(text=f'{course.name} (Идет)' if course.is_active() else f'{course.name} (Завершен)',
+                      callback_data=course_navigation.new(menu='offline', table=course.table, current_id=0))
+            btn_online.append(btn)
+        elif course.is_active():
             btn = IKB(text=f'{course.name} (Онлайн)', callback_data=course_navigation.new(menu='online', table=course.table, current_id=0))
             btn_online.append(btn)
         else:
@@ -26,7 +30,7 @@ def create_ikb_all_courses(course_list: list[Course] = [], admin: bool=False) ->
     return ikb_all_courses
 
 
-def create_ikb_class_navigation(menu: str, size: int, table: str, current_id: int, admin: bool) -> InlineKeyboardMarkup:
+def create_ikb_class_navigation(menu: str, size: int, table: str, current_id: int, admin: bool, msg: MsgToDict) -> InlineKeyboardMarkup:
     ikb_class_navigation = InlineKeyboardMarkup(row_width=3)
     prev_id = int(current_id - 1) if current_id != 0 else int(size - 1)
     next_id = int(current_id + 1) if current_id != (size - 1) else 0
@@ -44,7 +48,11 @@ def create_ikb_class_navigation(menu: str, size: int, table: str, current_id: in
         else:
             ikb_class_navigation.row(btn_lecture_edit, btn_back)
     else:
-        ikb_class_navigation.row(btn_purchase, btn_back)
+        user_courses, user_lectures = user_db.course_and_lectures(msg.my_id)
+        if (not user_lectures or f'{table}:{current_id}' not in user_lectures) and table not in user_courses:
+            ikb_class_navigation.row(btn_purchase, btn_back)
+        else:
+            ikb_class_navigation.row(btn_back)
     return ikb_class_navigation
 
 def create_ikb_online_course(msg: MsgToDict, table: str, current_id: int) -> InlineKeyboardMarkup:

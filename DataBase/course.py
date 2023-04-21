@@ -53,7 +53,7 @@ class Course(DataBase):
 
     def users(self, tg_id: int):
         sql = '''SELECT courses FROM users WHERE tg_id=?'''
-        courses_list = self.execute(sql, (tg_id,), fetchone=True)
+        courses_list = self.execute(sql, (tg_id,), fetchone=True)[0]
         print(courses_list)
         if courses_list != (None,):
             courses_list = list(map(int, courses_list.split()))
@@ -67,6 +67,10 @@ class Course(DataBase):
         sql = f'''SELECT name FROM course_{table_name}'''
         list_completed = self.execute(sql, fetchall=True)
         return list_completed
+
+    def finalize(self, table_name: str):
+        sql = f'''UPDATE courses SET active=False WHERE table_name=?'''
+        self.execute(sql, (table_name,), commit=True)
 
     def purchase(self, user_id: int, table: str):
         sql = '''SELECT courses FROM users WHERE tg_id=?'''
