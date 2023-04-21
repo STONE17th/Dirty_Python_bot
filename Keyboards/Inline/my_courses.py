@@ -3,10 +3,8 @@ from Keyboards.Callback import main_menu, course_navigation
 from loader import course_db, lecture_db
 
 
-def create_ikb_my_courses(tg_id: int) -> InlineKeyboardMarkup:
-    kb_my_courses = InlineKeyboardMarkup(row_width=3)
-    courses = course_db.users(tg_id)
-    lectures = lecture_db.users(tg_id)
+def create_ikb_my_courses(courses, lectures, tg_id: int) -> InlineKeyboardMarkup:
+    kb_my_courses = InlineKeyboardMarkup(row_width=2)
     if courses and courses != (None,):
         btn_courses = [IKB(text=course[0] , callback_data=course_navigation.new(menu='my_courses', table=course[1] , current_id=0)) for course in courses]
         [kb_my_courses.add(btn) for btn in btn_courses]
