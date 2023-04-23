@@ -1,14 +1,15 @@
 from aiogram.types import Message, InputMediaPhoto
 from Keyboards import create_start_menu
 from Keyboards.Callback import main_menu
-from Misc import MsgToDict, pictures
+from Misc import MsgToDict, PICTURES, load_settings
 from loader import dp, bot, user_db, course_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='back'))
 @dp.message_handler(commands=['start'])
-async def start_command(message: Message, admin: bool, msg: MsgToDict):
-    poster = pictures.start_poster
+async def start_command(_, admin: bool, msg: MsgToDict):
+    poster = PICTURES.get('start_poster')
+    print(poster)
     user_db.check(msg.my_id, msg.name)
     desc = f'Привет, {msg.name}!'
     try:
@@ -19,9 +20,10 @@ async def start_command(message: Message, admin: bool, msg: MsgToDict):
 
 
 @dp.message_handler(commands=['check'])
-async def start_command(message: Message, admin: bool, msg: MsgToDict):
-    table_name = message.text.split()[1]
-    print(course_db.is_completed(table_name))
+async def start_command(message: Message):
+    load_settings()
+    # table_name = message.text.split()[1]
+    # print(course_db.is_completed(table_name))
 
 @dp.message_handler(content_types='photo')
 async def request_to_admin(message: Message):
@@ -29,4 +31,4 @@ async def request_to_admin(message: Message):
 
 
 
-# Этот коммит с ноута
+# Этот коммит с ПК

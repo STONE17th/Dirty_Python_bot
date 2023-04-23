@@ -45,3 +45,15 @@ class Announcement(StatesGroup):
     poster = State()
     url = State()
     confirm = State()
+
+class Posters(StatesGroup):
+    start_poster = State()
+    task_main = State()
+    my_courses = State()
+    all_courses = State()
+    no_lecture = State()
+    task_easy = State()
+    task_normal = State()
+    task_hard = State()
+    settings = State()
+    individual_courses = State()

@@ -2,12 +2,12 @@ from loader import dp, bot, user_db
 from aiogram.types import CallbackQuery, InputMediaPhoto
 from Keyboards import create_ikb_settings
 from Keyboards.Callback import main_menu,settings_option
-from Misc import MsgToDict, pictures
+from Misc import MsgToDict, PICTURES
 
 
 @dp.callback_query_handler(main_menu.filter(button='settings'))
 async def my_settings(call: CallbackQuery, msg: MsgToDict):
-    poster = pictures.start_poster
+    poster = PICTURES.get('settings')
     user_settings = user_db.settings(msg.my_id)
     desc = 'Это твои настройки'
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
