@@ -26,3 +26,7 @@ async def start_command(message: Message, admin: bool, msg: MsgToDict):
 @dp.message_handler(content_types='photo')
 async def request_to_admin(message: Message):
     await message.answer(message.photo[0].file_id)
+
+
+
+# Этот коммит с ноута

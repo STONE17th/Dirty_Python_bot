@@ -1,55 +1,16 @@
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery, InputMediaPhoto
+from aiogram.types import Message, CallbackQuery
 
 from Handlers.States import NewCourse
-from Keyboards import create_ikb_all_courses, create_ikb_confirm, create_ikb_class_navigation, create_ikb_online_course
-from Keyboards.Callback import main_menu, course_navigation
+from Keyboards import create_ikb_confirm
+from Keyboards.Callback import main_menu
 from Keyboards.Standart import kb_cancel
-from Misc import MsgToDict, Course, Lecture, pictures
-from loader import dp, bot, course_db
-
-
-@dp.callback_query_handler(main_menu.filter(button='all_courses'))
-async def user_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    poster = pictures.all_courses
-    course_list = course_db.all()
-    course_list = [Course(course) for course in course_list]
-    desc = f'{msg.name}, заходи позже. Пока у нас нечего тебе предложить'
-    if course_list:
-        desc = f'{msg.name}, это все актуальные курсы на данный момент!'
-    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
-                                 chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_all_courses(course_list, admin))
-
-
-@dp.callback_query_handler(course_navigation.filter(menu='online'))
-async def online_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    course = Course(course_db.select(msg.table))
-    desc = course.info()
-    keyboard = create_ikb_online_course(msg, msg.table, msg.id)
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
-                                 chat_id=msg.chat_id, message_id=msg.message_id, reply_markup=keyboard)
-
-
-@dp.callback_query_handler(course_navigation.filter(menu='offline'))
-async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    course = Course(course_db.select(msg.table))
-    desc = f'{msg.id + 1}/{course.size}\n{course.lecture(msg.id, admin)}'
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
-                                 chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation('offline', course.size, msg.table, msg.id,
-                                                                          admin, msg))
-
-
-@dp.callback_query_handler(course_navigation.filter(menu='finalize_course'))
-async def offline_courses(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    course_db.finalize(msg.table)
-    await call.answer(f'Курс завершен!', show_alert=True)
-    await bot.send_message(msg.my_id, text='Вернуться в главное меню /start')
+from Misc import MsgToDict
+from loader import dp, bot, course_db, user_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)
-async def name_catch(call: CallbackQuery, admin: bool, msg: MsgToDict):
+async def name_catch(_, admin: bool, msg: MsgToDict):
     if admin:
         await bot.send_message(msg.my_id, 'Введите название курса:', reply_markup=kb_cancel)
         await NewCourse.name.set()
@@ -131,8 +92,17 @@ async def save_new_course(call: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         course_db.add(data)
         await call.answer(f'Курс {data.get("name")} добавлен в БД')
+        user_list = [user[0] for user in user_db.select(alerts_courses='True')]
+        caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot\nЕсли не хочешь получать уведомления о курсах и лекциях - '
+        f'можешь отключить уведомления в настройках'
+        for user in user_list:
+            try:
+                await bot.send_message(user, text=caption)
+            except IOError:
+                print(f'у {user} нет чата с ботом')
     else:
         await call.answer('Отмена')
+
     await bot.send_message(call.message.chat.id, text='Вернуться в главное меню /start')
     await state.reset_data()
     await state.finish()

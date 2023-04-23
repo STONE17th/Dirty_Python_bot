@@ -1,5 +1,6 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
-from Keyboards.Callback import main_menu, confirm_request
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+from Keyboards.Callback import confirm_request
 
 
 def create_ikb_confirm(target: str, args: str) -> InlineKeyboardMarkup:

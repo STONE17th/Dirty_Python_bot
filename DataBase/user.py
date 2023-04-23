@@ -46,13 +46,8 @@ class User(DataBase):
         THEN 'False' ELSE 'True' END WHERE tg_id=?'''
         self.execute(sql, (tg_id,), commit=True)
 
-
     def is_admin(self, tg_id: int) -> bool:
         sql = '''SELECT * FROM admins WHERE tg_id=?'''
-        return self.execute(sql, (tg_id,), fetchone=True)
-
-    def course_and_lectures(self, tg_id: int) -> tuple[str]:
-        sql = '''SELECT courses, lectures FROM users WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
 
     def course_and_lectures(self, tg_id: int) -> tuple[str]:

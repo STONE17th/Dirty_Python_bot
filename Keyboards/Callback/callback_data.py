@@ -13,3 +13,5 @@ task_navigation = CallbackData('list_navigation', 'menu', 'task_type', 'task_lev
 course_navigation = CallbackData('course_navigation', 'menu', 'table', 'current_id')
 
 confirm_request = CallbackData('confirm', 'menu', 'args', 'button')
+
+settings_option = CallbackData('settings_option', 'menu', 'button')

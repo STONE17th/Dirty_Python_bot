@@ -18,3 +18,4 @@ tasks = {'строки': {'easy': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MA
                     'normal': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ',
                     'hard': 'AgACAgIAAxkBAAIJOWQ44NlllD_O7FN6BqUGt8bthf2MAAIcxzEb7QXJSaVxlvxvZ_T1AQADAgADcwADLwQ'}
          }
+individual_courses = 'AgACAgIAAxkBAAIL7mQ_rfedzsTs0wi3z5BGTsbc9IFFAAJNyTEbKzwAAUqiAsyJa3mR7gEAAwIAA3MAAy8E'
