@@ -5,13 +5,13 @@ from Handlers.States import NewTask
 from Keyboards import create_ikb_confirm, create_ikb_list_navigation, create_ikb_select_option
 from Keyboards.Callback import main_menu, task_navigation, confirm_request
 from Keyboards.Standart import kb_cancel, create_kb_task_type, kb_task_level
-from Misc import MsgToDict, CurrentTask, pictures
+from Misc import MsgToDict, CurrentTask, PICTURES
 from loader import dp, bot, task_db, user_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='tasks'))
-async def select_tasks_type(call: CallbackQuery, admin: bool, msg: MsgToDict):
-    poster = pictures.task_main
+async def select_tasks_type(_, admin: bool, msg: MsgToDict):
+    poster = PICTURES.get('task_main')
     description = f'{msg.name}, выбери тему!'
     btn_list = [btn[0] for btn in set(task_db.collect('task_type'))]
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=description),
@@ -20,11 +20,11 @@ async def select_tasks_type(call: CallbackQuery, admin: bool, msg: MsgToDict):
 
 
 @dp.callback_query_handler(task_navigation.filter(menu='type'))
-async def select_tasks_level(call: CallbackQuery, admin: bool, msg: MsgToDict):
+async def select_tasks_level(_, admin: bool, msg: MsgToDict):
 
     btn_list = [btn[0] for btn in set(task_db.collect('task_level', msg.type))]
     btn_list = [btn for btn in ['easy', 'normal', 'hard'] if btn in btn_list]
-    poster = pictures.task_main
+    poster = PICTURES.get('task_main')
     description = f'{msg.name}, выбери уровень сложности!'
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=description),
                                  chat_id=msg.chat_id, message_id=msg.message_id,

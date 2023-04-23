@@ -1,7 +1,6 @@
 from aiogram.types import Message, CallbackQuery
 
-from Misc import pictures
-from loader import course_db
+from loader import course_db, PICTURES
 
 
 class Lecture:
@@ -74,7 +73,7 @@ class CurrentTask:
         self.type = task_list[1]
         self.level = task_list[2]
         self.value = task_list[3]
-        self.poster = pictures.tasks.get(self.type).get(self.level)
+        self.poster = PICTURES.get(f'task_{self.level}')
 
     def task(self, index: int, total: int):
         return f'{index + 1}/{total}\nТема: {self.type}\nУровень: {self.level}\n\n{self.value}'

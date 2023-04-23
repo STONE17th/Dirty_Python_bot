@@ -2,13 +2,13 @@ from aiogram.types import CallbackQuery, InputMediaPhoto
 
 from Keyboards import create_ikb_all_courses, create_ikb_class_navigation, create_ikb_online_course, create_ikb_individual
 from Keyboards.Callback import main_menu, course_navigation
-from Misc import MsgToDict, Course, pictures
+from Misc import MsgToDict, Course, PICTURES
 from loader import dp, bot, course_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='all_courses'))
 async def user_courses(_, admin: bool, msg: MsgToDict):
-    poster = pictures.all_courses
+    poster = PICTURES.get('all_courses')
     course_list = course_db.all()
     course_list = [Course(course) for course in course_list]
     desc = f'{msg.name}, заходи позже. Пока у нас нечего тебе предложить'
