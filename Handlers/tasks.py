@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 
 from Handlers.States import NewTask
 from Keyboards import create_ikb_confirm, create_ikb_list_navigation, create_ikb_select_option
-from Keyboards.Callback import main_menu, task_navigation, confirm_request
+from Keyboards.Callback import main_menu, list_navigation, confirm_request
 from Keyboards.Standart import kb_cancel, create_kb_task_type, kb_task_level
 from Misc import MsgToDict, CurrentTask, PICTURES
 from loader import dp, bot, task_db, user_db
@@ -19,7 +19,7 @@ async def select_tasks_type(_, admin: bool, msg: MsgToDict):
                                  reply_markup=create_ikb_select_option('type', admin, btn_list))
 
 
-@dp.callback_query_handler(task_navigation.filter(menu='type'))
+@dp.callback_query_handler(list_navigation.filter(menu='type'))
 async def select_tasks_level(_, admin: bool, msg: MsgToDict):
 
     btn_list = [btn[0] for btn in set(task_db.collect('task_level', msg.type))]
@@ -31,8 +31,8 @@ async def select_tasks_level(_, admin: bool, msg: MsgToDict):
                                  reply_markup=create_ikb_select_option('level', admin, btn_list, msg.type))
 
 
-@dp.callback_query_handler(task_navigation.filter(menu='level'))
-@dp.callback_query_handler(task_navigation.filter(menu='tasks'))
+@dp.callback_query_handler(list_navigation.filter(menu='level'))
+@dp.callback_query_handler(list_navigation.filter(menu='tasks'))
 async def select_tasks(call: CallbackQuery, admin: bool):
     msg = MsgToDict(call)
     task_list = task_db.select(msg.type, msg.level)
@@ -97,9 +97,8 @@ async def start_command(call: CallbackQuery, state: FSMContext):
     await state.finish()
 
 
-@dp.callback_query_handler(task_navigation.filter(menu='task_delete'))
-async def add_task_command(call: CallbackQuery, msg: MsgToDict):
-    # msg = MsgToDict(call)
+@dp.callback_query_handler(list_navigation.filter(menu='task_delete'))
+async def add_task_command(_, msg: MsgToDict):
     task_id = task_db.select(msg.type, msg.level)[msg.id][0]
     await bot.send_message(msg.chat_id, text='Точно удалить задачу?',
                            reply_markup=create_ikb_confirm('delete', task_id))

@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher import FSMContext
 from Handlers.States import NewLecture
 from Keyboards.Standart import kb_cancel
-from Keyboards import create_ikb_confirm, create_ikb_class_navigation
+from Keyboards import create_ikb_confirm
 from Keyboards.Callback import course_navigation
 from Misc import MsgToDict
 
@@ -25,11 +25,13 @@ async def desc_catch(message: Message, state: FSMContext):
     await message.answer(text='Введите описание лекции:', reply_markup=kb_cancel)
     await NewLecture.next()
 
+
 @dp.message_handler(state=NewLecture.desc)
 async def poster_catch(message: Message, state: FSMContext):
     await state.update_data({'desc': message.text})
     await message.answer(text='Отправьте обложку лекции:', reply_markup=kb_cancel)
     await NewLecture.next()
+
 
 @dp.message_handler(content_types=['photo', 'text'], state=NewLecture.poster)
 async def video_catch(message: Message, state: FSMContext):
@@ -40,6 +42,8 @@ async def video_catch(message: Message, state: FSMContext):
     await state.update_data({'poster': photo})
     await message.answer(text='Введите ссылку на видео:', reply_markup=kb_cancel)
     await NewLecture.next()
+
+
 @dp.message_handler(state=NewLecture.video)
 async def compendium_catch(message: Message, state: FSMContext):
     await state.update_data({'video': message.text})

@@ -1,7 +1,7 @@
 import os
 
 from aiogram.types import ContentType
-from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, LabeledPrice
+from aiogram.types import Message, PreCheckoutQuery, LabeledPrice
 
 from Keyboards.Callback import course_navigation
 from Misc import MsgToDict, Lecture, Course
@@ -9,7 +9,7 @@ from loader import dp, lecture_db, course_db
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='purchase'))
-async def purchase(call: CallbackQuery, msg: MsgToDict):
+async def purchase(_, msg: MsgToDict):
     if msg.id == -1:
         target_lecture = Course(course_db.select(msg.table))
         merchandise = msg.table

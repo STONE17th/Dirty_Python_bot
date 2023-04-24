@@ -17,7 +17,6 @@ class Settings(DataBase):
         return self.execute(sql, parameters, fetchall=True)
 
     def save_posters(self, data: dict[str, str]):
-
         for poster, link in data.items():
             params = (link, poster)
             sql = f'''UPDATE settings SET value=? WHERE name=?'''

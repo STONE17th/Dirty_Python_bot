@@ -1,5 +1,4 @@
 from DataBase import DataBase
-from Misc import pictures
 
 
 class Course(DataBase):

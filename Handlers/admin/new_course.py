@@ -78,8 +78,10 @@ async def start_catch(message: Message, state: FSMContext):
 async def confirm_new_course(message: Message, state: FSMContext):
     await state.update_data({'start_date': message.text})
     data = await state.get_data()
-    caption = f"Название: {data.get('name')}\n\nНазвание таблицы: {data.get('name')}\n\nПродолжительность: {data.get('quantity')}\n\n" \
-              f"Описание: {data.get('desc')}\n\nРабочая папка: {data.get('url')}\nТелеграм-чат: {data.get('tg_chat')}\n\nЦена курса: " \
+    caption = f"Название: {data.get('name')}\n\nНазвание таблицы: {data.get('name')}\n\n" \
+              f"Продолжительность: {data.get('quantity')}\n\n" \
+              f"Описание: {data.get('desc')}\n\nРабочая папка: {data.get('url')}\n" \
+              f"Телеграм-чат: {data.get('tg_chat')}\n\nЦена курса: " \
               f"{data.get('price')}\n\nДата начала: {data.get('start_date')}"
     await bot.send_photo(chat_id=message.from_user.id, photo=data.get('poster'), caption=caption,
                          reply_markup=create_ikb_confirm('course', 'confirm'))
@@ -93,8 +95,9 @@ async def save_new_course(call: CallbackQuery, state: FSMContext):
         course_db.add(data)
         await call.answer(f'Курс {data.get("name")} добавлен в БД')
         user_list = [user[0] for user in user_db.select(alerts_courses='True')]
-        caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot\nЕсли не хочешь получать уведомления о курсах и лекциях - '
-        f'можешь отключить уведомления в настройках'
+        caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot\n' \
+                  f'Если не хочешь получать уведомления о курсах и лекциях - '\
+                  f'можешь отключить уведомления в настройках'
         for user in user_list:
             try:
                 await bot.send_message(user, text=caption)

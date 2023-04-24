@@ -1,6 +1,7 @@
 from aiogram.types import CallbackQuery, InputMediaPhoto
 
-from Keyboards import create_ikb_all_courses, create_ikb_class_navigation, create_ikb_online_course, create_ikb_individual
+from Keyboards import create_ikb_all_courses, create_ikb_class_navigation, create_ikb_online_course, \
+    create_ikb_individual
 from Keyboards.Callback import main_menu, course_navigation
 from Misc import MsgToDict, Course, PICTURES
 from loader import dp, bot, course_db
@@ -32,10 +33,10 @@ async def online_courses(_, msg: MsgToDict):
 async def offline_courses(_, admin: bool, msg: MsgToDict):
     course = Course(course_db.select(msg.table))
     desc = f'{msg.id + 1}/{len(course)}\n{course.lecture(msg.id, admin)}'
+    keyboard = create_ikb_class_navigation('offline', len(course), msg.table, msg.id, admin, msg)
     await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_class_navigation('offline', len(course), msg.table, msg.id,
-                                                                          admin, msg))
+                                 reply_markup=keyboard)
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='finalize_course'))
@@ -47,10 +48,12 @@ async def offline_courses(call: CallbackQuery, msg: MsgToDict):
 
 @dp.callback_query_handler(course_navigation.filter(menu='individual'))
 async def individual_courses(_, msg: MsgToDict):
-    desc = f'{msg.name}, если ты здесь, то видимо тебе нужны индивидуальные курсы\nи , да,  мы можем с тобой поработать' \
-           f'\nСамый главный вопрос который интересует всех - СКОЛЬКО? ту тнет однозначного ответа, зависит от того, чем будем заниматься :)\n' \
-           f'Так что давай решим этот вопрос при личном общении. Жми кнопку "Оставить заявку" и я с тобой свяжусь. Гуд ЛАК!'
-    await bot.edit_message_media(media=InputMediaPhoto(media=pictures.individual_courses, caption=desc),
+    desc = f'{msg.name}, если ты здесь, то видимо тебе нужны индивидуальные курсы\n' \
+           f'и , да,  мы можем с тобой поработать\nСамый главный вопрос который интересует всех - ' \
+           f'СКОЛЬКО? ту тнет однозначного ответа, зависит от того, чем будем заниматься :)\n' \
+           f'Так что давай решим этот вопрос при личном общении.\n' \
+           f'Жми кнопку "Оставить заявку" и я с тобой свяжусь. Гуд ЛАК!'
+    await bot.edit_message_media(media=InputMediaPhoto(media=PICTURES.get('individual_courses'), caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
                                  reply_markup=create_ikb_individual())
 

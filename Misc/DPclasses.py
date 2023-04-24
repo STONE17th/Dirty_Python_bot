@@ -60,9 +60,12 @@ class Course:
 
     def lecture(self, index: int, admin: bool, is_bought: bool = False):
         if admin:
-            return f'Название: {self.lectures[index].name}\n\nОписание: {self.lectures[index].desc}\n\nВидео: {self.lectures[index].video}' \
-                   f'\nКонспект: {self.lectures[index].compendium}' + ('\n\nЦена: {self.lectures[index].price}' if not is_bought else '')
-        return f'Название: {self.lectures[index].name}\n\nОписание: {self.lectures[index].desc}\n\nЦена: {self.lectures[index].price}'
+            return f'Название: {self.lectures[index].name}\n\nОписание: ' \
+                   f'{self.lectures[index].desc}\n\nВидео: {self.lectures[index].video}' \
+                   f'\nКонспект: {self.lectures[index].compendium}' + \
+                ('\n\nЦена: {self.lectures[index].price}' if not is_bought else '')
+        return f'Название: {self.lectures[index].name}\n\nОписание: {self.lectures[index].desc}\n\nЦена: ' \
+               f'{self.lectures[index].price}'
 
     def add_new(self, target_lecture: str):
         self.lectures.append(Lecture(target_lecture))
@@ -81,26 +84,26 @@ class CurrentTask:
 
 class MsgToDict:
     def __init__(self, message: Message | CallbackQuery):
+        self.name = message.from_user.first_name
+        self.chat_id = message.from_user.id
+        self.my_id = message.from_user.id
         if isinstance(message, Message):
-            self.name = message.from_user.first_name
-            self.my_id = message.from_user.id
-            self.chat_id = message.from_user.id
             self.message_id = message.message_id
             self.data = message.text
         elif isinstance(message, CallbackQuery):
-            self.name = message.from_user.first_name
-            self.chat_id = message.from_user.id
-            self.my_id = message.from_user.id
             self.message_id = message.message.message_id
             self.data = message.data.split(':')
-        if self.data:
-            if self.data[0] == 'list_navigation':
-                self.type = self.data[2]
-                self.level = self.data[3]
-                self.id = int(self.data[4])
-            elif self.data[0] == 'course_navigation':
-                self.table = self.data[-2]
-                self.id = int(self.data[-1])
-            elif self.data[0] == 'settings_option':
-                self.menu = self.data[-2]
-                self.button = self.data[-1]
+            if self.data:
+                match self.data:
+                    case ['list_navigation', _, task_type, level, current_id]:
+                        self.type = task_type
+                        self.level = level
+                        self.id = int(current_id)
+                    case ['course_navigation', _, table, lecture_id]:
+                        self.table = table
+                        self.id = int(lecture_id)
+                    case ['settings_option', menu, button]:
+                        self.menu = menu
+                        self.button = button
+                    case _:
+                        self.data = message.data

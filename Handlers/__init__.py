@@ -7,5 +7,4 @@ from .purchase import dp
 from .my_courses import dp
 from .admin import dp
 
-
 __all__ = ['dp']

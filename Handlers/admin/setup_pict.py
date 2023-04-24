@@ -71,6 +71,7 @@ async def set_start_poster(message: Message, state: FSMContext):
     await bot.send_message(message.from_user.id, 'Тяжелая задача: ', reply_markup=kb_next_pict)
     await Posters.next()
 
+
 @dp.message_handler(content_types=['photo', 'text'], state=Posters.task_hard)
 async def set_start_poster(message: Message, state: FSMContext):
     if message.text != 'Дальше':

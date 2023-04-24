@@ -5,8 +5,6 @@ class Lecture(DataBase):
     def __init__(self):
         super().__init__()
 
-
-
     def all(self, table_name: str):
         sql = f'''SELECT * FROM course_{table_name}'''
         return self.execute(sql, fetchall=True)

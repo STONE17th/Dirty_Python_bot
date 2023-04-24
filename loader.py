@@ -7,8 +7,8 @@ import os
 memory = MemoryStorage()
 
 PICTURES: dict[str, str] = {}.fromkeys(['start_poster', 'task_main', 'my_courses', 'all_courses',
-                                        'no_lecture', 'task_easy', 'task_normal', 'task_hard', 'individual_courses',
-                                        'settings'])
+                                        'no_lecture', 'task_easy', 'task_normal', 'task_hard',
+                                        'individual_courses', 'settings'])
 
 bot = Bot(token=os.getenv('TOKEN'))
 dp = Dispatcher(bot, storage=memory)

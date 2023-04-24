@@ -46,6 +46,7 @@ class Announcement(StatesGroup):
     url = State()
     confirm = State()
 
+
 class Posters(StatesGroup):
     start_poster = State()
     task_main = State()
