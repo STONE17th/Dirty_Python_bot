@@ -5,7 +5,7 @@ from Handlers.States import NewLecture
 from Keyboards.Standart import kb_cancel
 from Keyboards import create_ikb_confirm
 from Keyboards.Callback import course_navigation
-from Misc import MsgToDict
+from Misc import MsgToDict, user_distribution
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='edit_class'), state=None)
@@ -76,6 +76,9 @@ async def save_lecture(call: CallbackQuery, state: FSMContext, msg: MsgToDict):
         data = await state.get_data()
         lecture_db.update(data)
         await call.answer(f'Лекция {data.get("name")} внесена в БД')
+        name = course_db.select(data.get('table'))[1]
+        caption = f'Курс: {name}\nПоявился доступ к лекции "{data.get("name")}"'
+        await user_distribution('courses', caption, data.get('table'))
     else:
         await call.answer('Отмена')
     await bot.send_message(msg.my_id, text='Вернуться в главное меню /start')

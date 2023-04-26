@@ -28,7 +28,7 @@ class Course(DataBase):
                   new_course.get('price'), new_course.get('start_date'), 'True')
         self.execute(sql, course, commit=True)
         self.create_table_lectures(new_course.get('table'))
-        empty_course = (None, None, pictures.no_lection, None, None, None)
+        empty_course = (None, None, None, None, None, None)
         for _ in range(int(new_course.get('quantity'))):
             sql = f'''INSERT INTO course_{new_course.get('table')} (name, desc, poster,
             video_url, compendium_url, price) VALUES (?, ?, ?, ?, ?, ?)'''

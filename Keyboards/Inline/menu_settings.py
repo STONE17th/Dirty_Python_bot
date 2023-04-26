@@ -4,16 +4,18 @@ from Keyboards.Callback import main_menu, settings_option
 
 
 def create_ikb_settings(my_set: tuple) -> InlineKeyboardMarkup:
-    _, stream, courses, news = my_set
+    *_, stream, courses, news = my_set
+    ON = '\u2705'
+    OFF = '\u274C'
     ikb_settings = InlineKeyboardMarkup(row_width=1)
 
-    btn_stream = InlineKeyboardButton(text=f'Оповещения о стримах DP: {"ON" if stream == "True" else "OFF"}',
+    btn_stream = InlineKeyboardButton(text=f'Оповещения о стримах DP: {ON if stream == "True" else OFF}',
                                       callback_data=settings_option.new(menu='settings',
                                                                         button='stream'))
-    btn_courses = InlineKeyboardButton(text=f'Оповещения о моих курсах DP: {"ON" if courses == "True" else "OFF"}',
+    btn_courses = InlineKeyboardButton(text=f'Оповещения о моих курсах DP: {ON if courses == "True" else OFF}',
                                        callback_data=settings_option.new(menu='settings',
                                                                          button='courses'))
-    btn_news = InlineKeyboardButton(text=f'Оповещения о новостях и акциях DP: {"ON" if news == "True" else "OFF"}',
+    btn_news = InlineKeyboardButton(text=f'Оповещения о новостях и акциях DP: {ON if news == "True" else OFF}',
                                     callback_data=settings_option.new(menu='settings',
                                                                       button='news'))
     btn_back = InlineKeyboardButton(text='Назад',

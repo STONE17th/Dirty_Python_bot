@@ -7,18 +7,20 @@ class User(DataBase):
 
     def create_table_users(self):
         sql = '''CREATE TABLE IF NOT EXISTS users 
-        (tg_id INTEGER PRIMARY KEY, name VARCHAR, courses VARCHAR, lectures VARCHAR)'''
+        (tg_id INTEGER PRIMARY KEY,
+        name VARCHAR, courses VARCHAR, lectures VARCHAR)'''
         self.execute(sql, commit=True)
 
     def create_table_users_options(self):
         sql = '''CREATE TABLE IF NOT EXISTS users_options 
-        (tg_id INTEGER PRIMARY KEY, alerts_stream VARCHAR,
-        alerts_courses VARCHAR, alerts_news VARCHAR)'''
+        (uo_id INTEGER PRIMARY KEY AUTOINCREMENT, tg_id INTEGER,
+        alerts_stream VARCHAR, alerts_courses VARCHAR, alerts_news VARCHAR,
+        FOREIGN KEY (tg_id) REFERENCES users (tg_id))'''
         self.execute(sql, commit=True)
 
     def create_table_admins(self):
         sql = '''CREATE TABLE IF NOT EXISTS admins 
-                (tg_id INTEGER PRIMARY KEY)'''
+                (admin_id INTEGER PRIMARY KEY, tg_id INTEGER)'''
         self.execute(sql, commit=True)
 
     def check(self, tg_id: int, user_name: str):
@@ -36,6 +38,16 @@ class User(DataBase):
         sql = '''SELECT tg_id FROM users_options WHERE '''
         sql, parameters = self.extract_kwargs(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
+
+    def at_course(self, **kwargs):
+        alert = kwargs.get('alert')
+        table = kwargs.get('table')
+        if not table:
+            sql = f'''SELECT tg_id FROM users_options WHERE {alert}="True"'''
+            return self.execute(sql, fetchall=True)
+        sql = f'''SELECT users.tg_id FROM users JOIN users_options ON users.tg_id = users_options.tg_id WHERE users_options.{alert}="True" AND users.courses LIKE "%{table}%"'''
+        return self.execute(sql, fetchall=True)
+
 
     def settings(self, tg_id: int):
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''

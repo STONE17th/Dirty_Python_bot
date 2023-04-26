@@ -5,7 +5,7 @@ from Keyboards.Callback import main_menu, tasks, list_navigation
 
 def create_ikb_select_option(select: str, admin: bool, btn_list: list[str],
                              task_type: str = '') -> InlineKeyboardMarkup:
-    ikb_navigation = InlineKeyboardMarkup(row_width=3)
+    ikb_navigation = InlineKeyboardMarkup(row_width=2)
     if select == 'type':
         btn_list = [
             IKB(text=text,
@@ -31,7 +31,8 @@ def create_ikb_select_option(select: str, admin: bool, btn_list: list[str],
     btn_add_task = IKB(text='Добавить задачу',
                        callback_data=main_menu.new(menu='',
                                                    button='add_task'))
-    ikb_navigation.add(*btn_list)
+    for button in btn_list:
+        ikb_navigation.row(button)
     if admin:
         ikb_navigation.add(btn_add_task, btn_back)
     else:
@@ -42,7 +43,7 @@ def create_ikb_select_option(select: str, admin: bool, btn_list: list[str],
 
 def create_ikb_list_navigation(menu: str, admin: bool, task_type: str, task_level: str, curr_id: int,
                                list_size: int) -> InlineKeyboardMarkup:
-    ikb_navigation = InlineKeyboardMarkup(row_width=3)
+    ikb_navigation = InlineKeyboardMarkup(row_width=1)
     prev_id = int(curr_id - 1) if curr_id != 0 else int(list_size - 1)
     next_id = int(curr_id + 1) if curr_id != (list_size - 1) else 0
     btn_prev = IKB(text='<<<',

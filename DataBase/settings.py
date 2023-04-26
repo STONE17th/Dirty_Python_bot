@@ -10,6 +10,8 @@ class Settings(DataBase):
         (settings_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, type_set VARCHAR,
         value VARCHAR, option_one VARCHAR, option_two VARCHAR, option_three VARCHAR)'''
         self.execute(sql, commit=True)
+        sql = '''CREATE UNIQUE INDEX IF NOT EXISTS idx_settings_name ON settings (name)'''
+        self.execute(sql, commit=True)
 
     def load(self, **kwargs):
         sql = '''SELECT * FROM settings WHERE '''
@@ -18,6 +20,7 @@ class Settings(DataBase):
 
     def save_posters(self, data: dict[str, str]):
         for poster, link in data.items():
-            params = (link, poster)
-            sql = f'''UPDATE settings SET value=? WHERE name=?'''
+            params = (poster, link)
+            sql = f'''REPLACE INTO settings (name, type_set, value) VALUES (?, "poster", ?)'''
             self.execute(sql, params, commit=True)
+

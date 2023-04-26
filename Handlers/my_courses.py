@@ -1,4 +1,4 @@
-from aiogram.types import InputMediaPhoto, CallbackQuery
+from aiogram.types import InputMediaPhoto
 
 from Keyboards import create_ikb_my_courses, create_ikb_my_course_navigation
 from Keyboards.Callback import main_menu, course_navigation
@@ -32,9 +32,10 @@ async def users_courses(_, msg: MsgToDict):
     else:
         _, lectures = user_db.course_and_lectures(msg.my_id)
         lectures_list = Course((None, 'Отдельные лекции', 'custom', 'Лекции приобретенные поштучно',
-                                PICTURES.get('all_courses'), None, None, None, None, False))
+                                None, None, None, None, None, False))
         [lectures_list.add_new(lecture) for lecture in lectures.split()]
-    poster = lectures_list.lectures[msg.id].poster
+    poster = lectures_list.lectures[msg.id].poster if lectures_list.lectures[msg.id].poster else PICTURES.get(
+        'no_lecture')
     desc = f'{msg.id + 1}/{len(lectures_list)}\n{lectures_list.lecture(msg.id, True, True)}'
 
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),

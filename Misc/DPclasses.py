@@ -63,7 +63,7 @@ class Course:
             return f'Название: {self.lectures[index].name}\n\nОписание: ' \
                    f'{self.lectures[index].desc}\n\nВидео: {self.lectures[index].video}' \
                    f'\nКонспект: {self.lectures[index].compendium}' + \
-                ('\n\nЦена: {self.lectures[index].price}' if not is_bought else '')
+                (f'\n\nЦена: {self.lectures[index].price}' if not is_bought else '')
         return f'Название: {self.lectures[index].name}\n\nОписание: {self.lectures[index].desc}\n\nЦена: ' \
                f'{self.lectures[index].price}'
 

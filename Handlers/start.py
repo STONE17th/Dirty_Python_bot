@@ -1,7 +1,7 @@
 from aiogram.types import Message, InputMediaPhoto
 from Keyboards import create_start_menu
 from Keyboards.Callback import main_menu
-from Misc import MsgToDict, PICTURES, load_settings
+from Misc import MsgToDict, PICTURES, user_distribution
 from loader import dp, bot, user_db
 
 
@@ -24,8 +24,12 @@ async def start_command(_, admin: bool, msg: MsgToDict):
 
 
 @dp.message_handler(commands=['check'])
-async def start_command(_):
-    load_settings()
+async def start_command(message: Message):
+    # print(user_db.at_course(alert='alerts_stream', table='dp_basic_01'))
+    # user_distribution('stream', 'message')
+    # await user_distribution('courses', 'Новый курс')
+    await user_distribution('courses', 'В курсе Бэйсик новая лекция', 'dp_basic_01')
+    # user_distribution('news', 'message')
 
 
 @dp.message_handler(content_types='photo')

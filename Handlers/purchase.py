@@ -43,3 +43,5 @@ async def process_pay(message: Message, msg: MsgToDict):
         course_db.purchase(msg.my_id, my_purchase)
         text = 'курсу'
     await message.answer(text=f'Спасибо за покупку!\nДоступ к {text} будет во вкладке "Мои курсы" /my_courses')
+
+

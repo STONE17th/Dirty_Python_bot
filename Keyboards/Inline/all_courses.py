@@ -28,8 +28,8 @@ def create_ikb_all_courses(course_list: list[Course], admin: bool = False) -> In
     btn_individual = IKB(text='Индивидуальные занятия',
                          callback_data=crt_callback('individual'))
     btn_back = IKB(text='Назад', callback_data=main_menu.new(menu='', button='back'))
-    ikb_all_courses.row(*btn_online)
-    ikb_all_courses.row(*btn_offline)
+    ikb_all_courses.add(*btn_online)
+    ikb_all_courses.add(*btn_offline)
     if admin:
         ikb_all_courses.row(btn_create_new_course, btn_back)
     else:
@@ -65,7 +65,8 @@ def create_ikb_class_navigation(menu: str, size: int, table: str, current_id: in
             ikb_class_navigation.row(btn_lecture_edit, btn_back)
     else:
         user_courses, user_lectures = user_db.course_and_lectures(msg.my_id)
-        if not ((user_lectures and f'{table}:{current_id}' in user_lectures) or (user_courses and table in user_courses)):
+        if not ((user_lectures and f'{table}:{current_id}' in user_lectures) or (
+                user_courses and table in user_courses)):
             ikb_class_navigation.row(btn_purchase, btn_back)
         else:
             ikb_class_navigation.row(btn_back)
@@ -78,8 +79,9 @@ def create_ikb_online_course(msg: MsgToDict, table: str) -> InlineKeyboardMarkup
                        callback_data=crt_callback('purchase', table, -1))
     btn_back = IKB(text='Назад',
                    callback_data=main_menu.new(menu='', button='all_courses'))
-
-    user_courses, user_lectures = user_db.course_and_lectures(msg.my_id)
+    print(f'{user_db.course_and_lectures(msg.my_id)} лекции')
+    user_courses, user_lectures = user_db.course_and_lectures(msg.my_id) if user_db.course_and_lectures(
+        msg.my_id) else (None, None)
     if not user_courses or table not in user_courses:
         ikb_online_course.row(btn_purchase, btn_back)
     else:

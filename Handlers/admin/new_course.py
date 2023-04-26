@@ -5,8 +5,8 @@ from Handlers.States import NewCourse
 from Keyboards import create_ikb_confirm
 from Keyboards.Callback import main_menu
 from Keyboards.Standart import kb_cancel
-from Misc import MsgToDict
-from loader import dp, bot, course_db, user_db
+from Misc import MsgToDict, user_distribution
+from loader import dp, bot, course_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='new_course'), state=None)
@@ -94,15 +94,10 @@ async def save_new_course(call: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         course_db.add(data)
         await call.answer(f'Курс {data.get("name")} добавлен в БД')
-        user_list = [user[0] for user in user_db.select(alerts_courses='True')]
         caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot\n' \
                   f'Если не хочешь получать уведомления о курсах и лекциях - '\
                   f'можешь отключить уведомления в настройках'
-        for user in user_list:
-            try:
-                await bot.send_message(user, text=caption)
-            except IOError:
-                print(f'у {user} нет чата с ботом')
+        await user_distribution('courses', caption)
     else:
         await call.answer('Отмена')
 

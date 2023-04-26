@@ -23,9 +23,13 @@ async def user_courses(_, admin: bool, msg: MsgToDict):
 @dp.callback_query_handler(course_navigation.filter(menu='online'))
 async def online_courses(_, msg: MsgToDict):
     course = Course(course_db.select(msg.table))
+    poster = course.lectures[msg.id].poster
+    print(poster)
+    poster = poster if poster else PICTURES.get('no_lecture')
+    print(poster)
     desc = course.info()
     keyboard = create_ikb_online_course(msg, msg.table)
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
+    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id, reply_markup=keyboard)
 
 
@@ -34,7 +38,9 @@ async def offline_courses(_, admin: bool, msg: MsgToDict):
     course = Course(course_db.select(msg.table))
     desc = f'{msg.id + 1}/{len(course)}\n{course.lecture(msg.id, admin)}'
     keyboard = create_ikb_class_navigation('offline', len(course), msg.table, msg.id, admin, msg)
-    await bot.edit_message_media(media=InputMediaPhoto(media=course.lectures[msg.id].poster, caption=desc),
+    poster = course.lectures[msg.id].poster
+    poster = poster if poster else PICTURES.get('no_lecture')
+    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
                                  reply_markup=keyboard)
 
