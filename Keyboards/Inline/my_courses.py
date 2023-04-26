@@ -17,6 +17,7 @@ def create_ikb_my_courses(courses) -> InlineKeyboardMarkup:
     return kb_my_courses
 
 
+
 def create_ikb_my_course_navigation(menu: str, curr_id: int, list_size: int, table: str = '') -> InlineKeyboardMarkup:
     ikb_navigation = InlineKeyboardMarkup(row_width=2)
     prev_id = int(curr_id - 1) if curr_id != 0 else int(list_size - 1)
