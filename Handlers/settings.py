@@ -1,6 +1,6 @@
-from loader import dp, bot, user_db
+from loader import dp, bot, user_db, settings_db
 from aiogram.types import CallbackQuery, InputMediaPhoto
-from Keyboards import create_ikb_settings
+from Keyboards import create_ikb_settings, create_ikb_links
 from Keyboards.Callback import main_menu, settings_option
 from Misc import MsgToDict, PICTURES
 
@@ -33,3 +33,14 @@ async def select_settings(_, msg: MsgToDict):
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
                                  reply_markup=create_ikb_settings(user_settings))
+
+
+@dp.callback_query_handler(main_menu.filter(button='links'))
+async def links_list(_, msg: MsgToDict):
+    poster = PICTURES.get('start_poster')
+    caption = 'Это твои настройки'
+    btn_list = [link[3] for link in settings_db.load(type_set='link')]
+    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=caption),
+                                 chat_id=msg.chat_id,
+                                 message_id=msg.message_id,
+                                 reply_markup=create_ikb_links())

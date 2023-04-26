@@ -18,9 +18,10 @@ class Settings(DataBase):
         sql, parameters = self.extract_kwargs(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
 
-    def save_posters(self, data: dict[str, str]):
+    def save_settings(self, data: dict[str, str], type_settings: str):
         for poster, link in data.items():
-            params = (poster, link)
-            sql = f'''REPLACE INTO settings (name, type_set, value) VALUES (?, "poster", ?)'''
+            params = (poster, link, type_settings)
+            sql = f'''REPLACE INTO settings (name, value, type_set) VALUES (?, ?, ?)'''
             self.execute(sql, params, commit=True)
+
 

@@ -19,9 +19,11 @@ def create_start_menu(admin) -> InlineKeyboardMarkup:
     btn_my_settings = IKB(text='Настройки',
                           callback_data=crt_callback('main', 'settings'))
     btn_create_activity = IKB(text='Создать...',
-                              callback_data=crt_callback('main', 'create'))
+                              callback_data=crt_callback('main', 'notification'))
+    btn_links = IKB(text='Ссылки',
+                              callback_data=crt_callback('main', 'links'))
 
     ikb_start.add(btn_tasks, btn_all_courses, btn_create_activity if admin else btn_my_courses)
-    ikb_start.add(btn_my_settings)
+    ikb_start.add(btn_my_settings, btn_links)
 
     return ikb_start

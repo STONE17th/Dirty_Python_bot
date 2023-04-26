@@ -93,7 +93,6 @@ async def set_start_poster(message: Message, state: FSMContext):
     if message.text != 'Дальше':
         await state.update_data({'individual_courses': message.photo[0].file_id})
     data = await state.get_data()
-    print(data)
     save_posters(data)
     await state.reset_data()
     await state.finish()

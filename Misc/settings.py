@@ -8,4 +8,4 @@ def load_settings():
 
 def save_posters(data: dict[str, str]):
     PICTURES.update(data)
-    settings_db.save_posters(PICTURES)
+    settings_db.save_settings(PICTURES, 'poster')

@@ -39,7 +39,7 @@ class Stream(StatesGroup):
     confirm = State()
 
 
-class Announcement(StatesGroup):
+class News(StatesGroup):
     name = State()
     desc = State()
     poster = State()
@@ -58,3 +58,12 @@ class Posters(StatesGroup):
     task_hard = State()
     settings = State()
     individual_courses = State()
+
+class Links(StatesGroup):
+    you_tube = State()
+    zoom = State()
+    main_telegram = State()
+    boosty = State()
+    donation = State()
+    owner = State()
+    admin = State()
