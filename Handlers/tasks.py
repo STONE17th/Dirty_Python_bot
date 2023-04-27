@@ -21,7 +21,6 @@ async def select_tasks_type(_, admin: bool, msg: MsgToDict):
 
 @dp.callback_query_handler(list_navigation.filter(menu='type'))
 async def select_tasks_level(_, admin: bool, msg: MsgToDict):
-
     btn_list = [btn[0] for btn in set(task_db.collect('task_level', msg.type))]
     btn_list = [btn for btn in ['easy', 'normal', 'hard'] if btn in btn_list]
     poster = PICTURES.get('task_main')
@@ -46,8 +45,8 @@ async def select_tasks(call: CallbackQuery, admin: bool):
 @dp.callback_query_handler(main_menu.filter(button='add_task'))
 @dp.message_handler(commands=['add_new_task'], state=None)
 async def add_task_command(message: Message):
-    await message.answer(text='Введите тип задачи или введите новый:',
-                         reply_markup=create_kb_task_type())
+    await bot.send_message(message.from_user.id, text='Введите тип задачи или введите новый:',
+                           reply_markup=create_kb_task_type())
     await NewTask.task_type.set()
 
 
@@ -74,11 +73,11 @@ async def task_confirm(message: Message, state: FSMContext):
     data = await state.get_data()
     caption = f'Тип задачи: {data.get("task_type")}\nСложность: {data.get("task_level")}' \
               f'\nУсловие: {data.get("task_value")}\n\nСохранить?'
-    await message.answer(text=caption, reply_markup=create_ikb_confirm('task'))
+    await message.answer(text=caption, reply_markup=create_ikb_confirm('new_task'))
     await NewTask.next()
 
 
-@dp.callback_query_handler(state=NewTask.task_confirm)
+@dp.callback_query_handler(confirm_request.filter(menu='new_task'), state=NewTask.task_confirm)
 async def start_command(call: CallbackQuery, state: FSMContext):
     if call.data.split(':')[-1] == 'yes':
         data = await state.get_data()

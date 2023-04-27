@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from Keyboards.Callback import confirm_request
 
 
-def create_ikb_confirm(target: str, args: str) -> InlineKeyboardMarkup:
+def create_ikb_confirm(target: str, args: str = '') -> InlineKeyboardMarkup:
     ikb_confirm = InlineKeyboardMarkup(row_width=2)
 
     btn_yes = InlineKeyboardButton(text='Да', callback_data=confirm_request.new(menu=target, args=args, button='yes'))

@@ -5,7 +5,7 @@ from loader import task_db
 
 def create_kb_task_type() -> ReplyKeyboardMarkup:
     kb_task_type = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    type_list = [task_type[0] for task_type in task_db.collect_tasks('task_type')]
+    type_list = [task_type[0] for task_type in task_db.collect('task_type')]
     btn_list = []
     for task_type in set(type_list):
         btn_list.append(KeyboardButton(text=task_type))
