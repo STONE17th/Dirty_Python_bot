@@ -1,11 +1,11 @@
 import os
 
-from aiogram.types import ContentType
-from aiogram.types import Message, PreCheckoutQuery, LabeledPrice
+from aiogram.types import Message, PreCheckoutQuery, LabeledPrice, ContentType
 
 from Keyboards.Callback import course_navigation
 from Misc import MsgToDict, Lecture, Course
-from loader import dp, lecture_db, course_db
+from loader import dp, bot, lecture_db, course_db
+
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='purchase'))
@@ -27,21 +27,18 @@ async def purchase(_, msg: MsgToDict):
                               payload=merchandise,
                               start_parameter='purchase')
 
+    @dp.pre_checkout_query_handler()
+    async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
+        await dp.bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
-@dp.pre_checkout_query_handler()
-async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
-    await dp.bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
-
-
-@dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
-async def process_pay(message: Message, msg: MsgToDict):
-    my_purchase = message.successful_payment.invoice_payload
-    if ':' in my_purchase:
-        lecture_db.purchase(msg.my_id, *my_purchase.split(':'))
-        text = 'лекции'
-    else:
-        course_db.purchase(msg.my_id, my_purchase)
-        text = 'курсу'
-    await message.answer(text=f'Спасибо за покупку!\nДоступ к {text} будет во вкладке "Мои курсы" /my_courses')
-
-
+    @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
+    async def process_pay(message: Message, msg: MsgToDict):
+        my_purchase = message.successful_payment.invoice_payload
+        if ':' in my_purchase:
+            lecture_db.purchase(msg.my_id, *my_purchase.split(':'))
+            text = 'лекции'
+        else:
+            course_db.purchase(msg.my_id, my_purchase)
+            text = 'курсу'
+        await message.answer(text=f'Спасибо за покупку!\nДоступ к {text} будет во вкладке "Мои курсы"\n\n'
+                                  f'Вернуться в главное меню /start')

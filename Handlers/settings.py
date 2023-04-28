@@ -13,14 +13,14 @@ async def my_settings(_, msg: MsgToDict):
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
-                                 reply_markup=create_ikb_settings(user_settings))
+                                 reply_markup=create_ikb_settings(user_settings, msg))
 
 
 @dp.callback_query_handler(settings_option.filter(menu='settings'))
 async def select_settings(_, msg: MsgToDict):
     poster = PICTURES.get('start_poster')
     caption = 'Это твои настройки'
-    user_db.switcher(msg.my_id, msg.button)
+    user_db.switch_alert(msg.my_id, msg.button)
     user_settings = user_db.settings(msg.my_id)
     match msg.button:
         case 'stream':
@@ -32,7 +32,19 @@ async def select_settings(_, msg: MsgToDict):
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=caption),
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
-                                 reply_markup=create_ikb_settings(user_settings))
+                                 reply_markup=create_ikb_settings(user_settings, msg))
+
+
+@dp.callback_query_handler(main_menu.filter(menu='adm_switch'))
+async def admin_switcher(_, msg: MsgToDict):
+    user_db.switch_admin(msg.my_id)
+    poster = PICTURES.get('settings')
+    user_settings = user_db.settings(msg.my_id)
+    caption = f'Профиль переключен на ' + 'ADMIN' if user_db.is_admin()[0] else 'USER'
+    await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=caption),
+                                 chat_id=msg.chat_id,
+                                 message_id=msg.message_id,
+                                 reply_markup=create_ikb_settings(user_settings, msg))
 
 
 @dp.callback_query_handler(main_menu.filter(button='links'))
@@ -44,3 +56,6 @@ async def links_list(_, msg: MsgToDict):
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
                                  reply_markup=create_ikb_links())
+
+
+

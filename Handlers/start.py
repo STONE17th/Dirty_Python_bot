@@ -1,4 +1,5 @@
 from aiogram.types import Message, InputMediaPhoto
+from aiogram.utils.exceptions import MessageCantBeEdited
 from Keyboards import create_start_menu
 from Keyboards.Callback import main_menu
 from Misc import MsgToDict, PICTURES, user_distribution
@@ -16,7 +17,7 @@ async def start_command(_, admin: bool, msg: MsgToDict):
                                      chat_id=msg.chat_id,
                                      message_id=msg.message_id,
                                      reply_markup=create_start_menu(admin))
-    except:
+    except MessageCantBeEdited:
         await bot.send_photo(chat_id=msg.chat_id,
                              photo=poster,
                              caption=desc,
@@ -25,13 +26,7 @@ async def start_command(_, admin: bool, msg: MsgToDict):
 
 @dp.message_handler(commands=['check'])
 async def start_command(message: Message):
-    # print(user_db.at_course(alert='alerts_stream', table='dp_basic_01'))
-    # user_distribution('stream', 'message')
-    # await user_distribution('courses', 'Новый курс')
-    # await user_distribution('courses', 'В курсе Бэйсик новая лекция', 'dp_basic_01')
-    # user_distribution('news', 'message')
-    link_list = [link[3] for link in settings_db.load(type_set='link')]
-    print(link_list)
+    user_db.switch_admin(message.from_user.id)
 
 
 @dp.message_handler(content_types='photo')

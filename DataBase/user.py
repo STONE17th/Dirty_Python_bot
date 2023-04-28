@@ -20,7 +20,7 @@ class User(DataBase):
 
     def create_table_admins(self):
         sql = '''CREATE TABLE IF NOT EXISTS admins 
-                (admin_id INTEGER PRIMARY KEY, tg_id INTEGER)'''
+                (admin_id INTEGER PRIMARY KEY, tg_id INTEGER, active INTEGER)'''
         self.execute(sql, commit=True)
 
     def check(self, tg_id: int, user_name: str):
@@ -53,13 +53,18 @@ class User(DataBase):
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
 
-    def switcher(self, tg_id: int, option: str):
+    def switch_alert(self, tg_id: int, option: str):
         sql = f'''UPDATE users_options SET alerts_{option} = CASE WHEN alerts_{option} = 'True' 
         THEN 'False' ELSE 'True' END WHERE tg_id=?'''
         self.execute(sql, (tg_id,), commit=True)
 
-    def is_admin(self, tg_id: int) -> bool:
-        sql = '''SELECT * FROM admins WHERE tg_id=?'''
+    def switch_admin(self, tg_id: int):
+        sql = f'''UPDATE admins SET active = CASE WHEN active = 1 
+        THEN 0 ELSE 1 END WHERE tg_id=?'''
+        self.execute(sql, (tg_id,), commit=True)
+
+    def is_admin(self, tg_id: int) -> int:
+        sql = '''SELECT active FROM admins WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
 
     def course_and_lectures(self, tg_id: int) -> tuple[str]:
