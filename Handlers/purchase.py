@@ -4,8 +4,7 @@ from aiogram.types import Message, PreCheckoutQuery, LabeledPrice, ContentType
 
 from Keyboards.Callback import course_navigation
 from Misc import MsgToDict, Lecture, Course
-from loader import dp, bot, lecture_db, course_db
-
+from loader import dp, lecture_db, course_db
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='purchase'))

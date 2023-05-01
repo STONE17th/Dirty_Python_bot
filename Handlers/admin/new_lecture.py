@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher import FSMContext
 from Handlers.States import NewLecture
 from Keyboards.Standart import kb_cancel
-from Keyboards import create_ikb_confirm
+from Keyboards import ikb_confirm
 from Keyboards.Callback import course_navigation
 from Misc import MsgToDict, user_distribution
 
@@ -66,7 +66,7 @@ async def confirm_catch(message: Message, state: FSMContext, msg: MsgToDict):
               f"Ссылка на видео: {data.get('video')}\nСсылка на конспект: {data.get('compendium')}" \
               f"\n\nЦена курса: {data.get('price')}"
     await bot.send_photo(chat_id=msg.my_id, photo=data.get('poster'), caption=caption,
-                         reply_markup=create_ikb_confirm('class', 'confirm'))
+                         reply_markup=ikb_confirm('class', 'confirm'))
     await NewLecture.next()
 
 

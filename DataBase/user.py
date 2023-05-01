@@ -14,7 +14,7 @@ class User(DataBase):
     def create_table_users_options(self):
         sql = '''CREATE TABLE IF NOT EXISTS users_options 
         (uo_id INTEGER PRIMARY KEY AUTOINCREMENT, tg_id INTEGER,
-        alerts_stream VARCHAR, alerts_courses VARCHAR, alerts_news VARCHAR,
+        alerts_stream INTEGER, alerts_courses INTEGER, alerts_news INTEGER,
         FOREIGN KEY (tg_id) REFERENCES users (tg_id))'''
         self.execute(sql, commit=True)
 
@@ -53,15 +53,19 @@ class User(DataBase):
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
 
-    def switch_alert(self, tg_id: int, option: str):
-        sql = f'''UPDATE users_options SET alerts_{option} = CASE WHEN alerts_{option} = 'True' 
-        THEN 'False' ELSE 'True' END WHERE tg_id=?'''
-        self.execute(sql, (tg_id,), commit=True)
-
-    def switch_admin(self, tg_id: int):
-        sql = f'''UPDATE admins SET active = CASE WHEN active = 1 
+    def switch_alert(self, tg_id: int, option: str) -> tuple:
+        sql = f'''UPDATE users_options SET alerts_{option} = CASE WHEN alerts_{option} = 1 
         THEN 0 ELSE 1 END WHERE tg_id=?'''
         self.execute(sql, (tg_id,), commit=True)
+        sql = f'''SELECT alerts_{option} FROM users_options WHERE tg_id=?'''
+        return self.execute(sql, (tg_id,), fetchone=True)
+
+    def switch_admin(self, tg_id: int):
+        sql = f'''UPDATE admins SET active = CASE WHEN active = 1
+        THEN 0 ELSE 1 END WHERE tg_id=?'''
+        self.execute(sql, (tg_id,), commit=True)
+        sql = f'''SELECT active FROM admins WHERE tg_id=?'''
+        return self.execute(sql, (tg_id,), fetchone=True)
 
     def is_admin(self, tg_id: int) -> int:
         sql = '''SELECT active FROM admins WHERE tg_id=?'''

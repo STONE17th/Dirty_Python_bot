@@ -2,7 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from Handlers.States import NewCourse
-from Keyboards import create_ikb_confirm
+from Keyboards import ikb_confirm
 from Keyboards.Callback import main_menu
 from Keyboards.Standart import kb_cancel
 from Misc import MsgToDict, user_distribution
@@ -84,7 +84,7 @@ async def confirm_new_course(message: Message, state: FSMContext):
               f"Телеграм-чат: {data.get('tg_chat')}\n\nЦена курса: " \
               f"{data.get('price')}\n\nДата начала: {data.get('start_date')}"
     await bot.send_photo(chat_id=message.from_user.id, photo=data.get('poster'), caption=caption,
-                         reply_markup=create_ikb_confirm('course', 'confirm'))
+                         reply_markup=ikb_confirm('course', 'confirm'))
     await NewCourse.next()
 
 

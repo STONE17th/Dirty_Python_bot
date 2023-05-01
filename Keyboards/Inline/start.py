@@ -1,29 +1,23 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton as IKB
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton as InKB
 
 from Keyboards.Callback import main_menu
 
 
-def crt_callback(menu: str, button: str):
-    return main_menu.new(menu=menu, button=button)
+def crt_callback(button: str):
+    return main_menu.new(menu='main', button=button)
 
 
-def create_start_menu(admin) -> InlineKeyboardMarkup:
-    ikb_start = InlineKeyboardMarkup(row_width=3)
+def ikb_start(admin) -> InlineKeyboardMarkup:
+    keyboard_start = InlineKeyboardMarkup(row_width=3)
 
-    btn_tasks = IKB(text='Задачи',
-                    callback_data=crt_callback('main', 'tasks'))
-    btn_all_courses = IKB(text='Курсы DP',
-                          callback_data=crt_callback('main', 'all_courses'))
-    btn_my_courses = IKB(text='Мои курсы',
-                         callback_data=crt_callback('main', 'my_courses'))
-    btn_my_settings = IKB(text='Настройки',
-                          callback_data=crt_callback('main', 'settings'))
-    btn_create_activity = IKB(text='Создать...',
-                              callback_data=crt_callback('main', 'notification'))
-    btn_links = IKB(text='Ссылки',
-                              callback_data=crt_callback('main', 'links'))
+    btn_tasks = InKB(text='Задачи', callback_data=crt_callback('tasks'))
+    btn_all_courses = InKB(text='Курсы DP', callback_data=crt_callback('all_courses'))
+    btn_my_courses = InKB(text='Мои курсы', callback_data=crt_callback('my_courses'))
+    btn_my_settings = InKB(text='Настройки', callback_data=crt_callback('settings'))
+    btn_create_activity = InKB(text='Создать...', callback_data=crt_callback('notification'))
+    btn_links = InKB(text='Ссылки', callback_data=crt_callback('links'))
 
-    ikb_start.add(btn_tasks, btn_all_courses, btn_create_activity if admin else btn_my_courses)
-    ikb_start.add(btn_my_settings, btn_links)
+    keyboard_start.add(btn_tasks, btn_all_courses, btn_create_activity if admin else btn_my_courses)
+    keyboard_start.add(btn_my_settings, btn_links)
 
-    return ikb_start
+    return keyboard_start

@@ -1,6 +1,6 @@
 from aiogram.types import InputMediaPhoto
 
-from Keyboards import create_ikb_my_courses, create_ikb_my_course_navigation, create_ikb_notification
+from Keyboards import ikb_my_courses, ikb_my_course_navigation, create_ikb_notification
 from Keyboards.Callback import main_menu, course_navigation
 from Misc import MsgToDict, Course, PICTURES
 from loader import dp, bot, course_db, user_db

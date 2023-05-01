@@ -1,6 +1,6 @@
 from aiogram.types import InputMediaPhoto
 
-from Keyboards import create_ikb_my_courses, create_ikb_my_course_navigation
+from Keyboards import ikb_my_courses, ikb_my_course_navigation
 from Keyboards.Callback import main_menu, course_navigation
 from Misc import MsgToDict, Course, PICTURES
 from loader import dp, bot, course_db, user_db
@@ -22,24 +22,25 @@ async def check_course_or_lecture(_, msg: MsgToDict):
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
-                                 reply_markup=create_ikb_my_courses(courses_list))
+                                 reply_markup=ikb_my_courses(courses_list))
 
 
 @dp.callback_query_handler(course_navigation.filter(menu='my_courses'))
 async def users_courses(_, msg: MsgToDict):
     if msg.table != 'custom':
-        lectures_list = Course(course_db.select(msg.table))
+        cur_course = Course(course_db.select(msg.table))
     else:
         _, lectures = user_db.course_and_lectures(msg.my_id)
-        lectures_list = Course((None, 'Отдельные лекции', 'custom', 'Лекции приобретенные поштучно',
-                                None, None, None, None, None, False))
-        [lectures_list.add_new(lecture) for lecture in lectures.split()]
-    poster = lectures_list.lectures[msg.id].poster if lectures_list.lectures[msg.id].poster else PICTURES.get(
+        cur_course = Course((None, 'Отдельные лекции', 'custom', 'Лекции приобретенные поштучно',
+                             None, None, None, None, None, 0))
+        [cur_course.add_new(lecture) for lecture in lectures.split()]
+    poster = cur_course.lectures[msg.id].poster if cur_course.lectures[msg.id].poster else PICTURES.get(
         'no_lecture')
-    desc = f'{msg.id + 1}/{len(lectures_list)}\n{lectures_list.lecture(msg.id, True, True)}'
+    desc = f'{msg.id + 1}/{len(cur_course)}\n{cur_course.lecture(msg.id, False, True)}'
+    buttons = (cur_course.lectures[msg.id].video, cur_course.lectures[msg.id].compendium)
 
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                  chat_id=msg.chat_id,
                                  message_id=msg.message_id,
-                                 reply_markup=create_ikb_my_course_navigation('my_courses', msg.id,
-                                                                              len(lectures_list), msg.table))
+                                 reply_markup=ikb_my_course_navigation('my_courses', buttons, msg.id,
+                                                                       len(cur_course), msg.table))

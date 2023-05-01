@@ -2,7 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 
 from Handlers.States import NewTask
-from Keyboards import create_ikb_confirm, create_ikb_list_navigation, create_ikb_select_option
+from Keyboards import ikb_confirm, ikb_select_task, ikb_navigation
 from Keyboards.Callback import main_menu, list_navigation, confirm_request
 from Keyboards.Standart import kb_cancel, create_kb_task_type, kb_task_level
 from Misc import MsgToDict, CurrentTask, PICTURES
@@ -12,11 +12,11 @@ from loader import dp, bot, task_db, user_db
 @dp.callback_query_handler(main_menu.filter(button='tasks'))
 async def select_tasks_type(_, admin: bool, msg: MsgToDict):
     poster = PICTURES.get('task_main')
-    description = f'{msg.name}, выбери тему!'
+    description = f'{msg.name}, выбери тему задач!'
     btn_list = [btn[0] for btn in set(task_db.collect('task_type'))]
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=description),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_select_option('type', admin, btn_list))
+                                 reply_markup=ikb_select_task('type', admin, btn_list))
 
 
 @dp.callback_query_handler(list_navigation.filter(menu='type'))
@@ -27,7 +27,7 @@ async def select_tasks_level(_, admin: bool, msg: MsgToDict):
     description = f'{msg.name}, выбери уровень сложности!'
     await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=description),
                                  chat_id=msg.chat_id, message_id=msg.message_id,
-                                 reply_markup=create_ikb_select_option('level', admin, btn_list, msg.type))
+                                 reply_markup=ikb_select_task('level', admin, btn_list, msg.type))
 
 
 @dp.callback_query_handler(list_navigation.filter(menu='level'))
@@ -39,7 +39,7 @@ async def select_tasks(call: CallbackQuery, admin: bool):
     await bot.edit_message_media(
         media=InputMediaPhoto(media=current_task.poster, caption=current_task.task(msg.id, len(task_list))),
         chat_id=msg.chat_id, message_id=msg.message_id,
-        reply_markup=create_ikb_list_navigation('tasks', admin, msg.type, msg.level, msg.id, len(task_list)))
+        reply_markup=ikb_navigation('tasks', admin, msg.type, msg.level, msg.id, len(task_list)))
 
 
 @dp.callback_query_handler(main_menu.filter(button='add_task'))

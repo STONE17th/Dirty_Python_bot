@@ -25,7 +25,7 @@ class Course(DataBase):
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         course = (new_course.get('name'), new_course.get('table'), new_course.get('desc'),
                   new_course.get('poster'), new_course.get('url'), new_course.get('tg_chat'),
-                  new_course.get('price'), new_course.get('start_date'), 'True')
+                  new_course.get('price'), new_course.get('start_date'), 1)
         self.execute(sql, course, commit=True)
         self.create_table_lectures(new_course.get('table'))
         empty_course = (None, None, None, None, None, None)
@@ -62,14 +62,25 @@ class Course(DataBase):
         courses = [self.execute(sql, (course_id,), fetchone=True) for course_id in courses_list]
         return courses
 
+    def done(self, table_name: str) -> tuple[int, int]:
+        sql = f'''SELECT name FROM course_{table_name}'''
+        result = self.execute(sql, fetchall=True)
+        return sum([1 for x in result if x[0] != None]), len(result)
+
     def is_completed(self, table_name: str):
         sql = f'''SELECT name FROM course_{table_name}'''
-        list_completed = self.execute(sql, fetchall=True)
-        return list_completed
+        if all(map(lambda x: x[0], self.execute(sql, fetchall=True))):
+            return True
 
-    def finalize(self, table_name: str):
-        sql = f'''UPDATE courses SET active=False WHERE table_name=?'''
-        self.execute(sql, (table_name,), commit=True)
+    def status(self, table_name: str):
+        sql = f'''SELECT active FROM courses WHERE table_name=?'''
+        result = self.execute(sql, (table_name,), fetchone=True)
+        if result:
+            return result[0]
+
+    def finalize(self, table_name: str, status: int = 0):
+        sql = f'''UPDATE courses SET active=? WHERE table_name=?'''
+        self.execute(sql, (status, table_name), commit=True)
 
     def purchase(self, user_id: int, table: str):
         sql = '''SELECT courses FROM users WHERE tg_id=?'''

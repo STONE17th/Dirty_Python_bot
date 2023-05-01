@@ -1,14 +1,12 @@
-from .all_courses import create_ikb_all_courses, create_ikb_individual, create_ikb_class_navigation, \
-    create_ikb_online_course
-from .confirm import create_ikb_confirm
-from .menu_navigation import create_ikb_list_navigation, create_ikb_select_option
-from .menu_settings import create_ikb_settings
-from .start import create_start_menu
-from .my_courses import create_ikb_my_courses, create_ikb_my_course_navigation
+from .all_courses import ikb_all_courses, ikb_individual, ikb_offline_course, ikb_online_course
+from .confirm import ikb_confirm
+from .menu_navigation import ikb_navigation, ikb_select_task
+from .settings import ikb_settings, ikb_links
+from .start import ikb_start
+from .my_courses import ikb_my_courses, ikb_my_course_navigation
 from .notification import create_ikb_notification
-from .links import create_ikb_links
 
-__all__ = ['create_start_menu', 'create_ikb_confirm', 'create_ikb_settings', 'create_ikb_list_navigation',
-           'create_ikb_select_option', 'create_ikb_all_courses', 'create_ikb_class_navigation',
-           'create_ikb_my_course_navigation', 'create_ikb_online_course', 'create_ikb_individual',
-           'create_ikb_notification', 'create_ikb_links']
+__all__ = ['ikb_start', 'ikb_confirm', 'ikb_settings', 'ikb_navigation',
+           'ikb_select_task', 'ikb_all_courses', 'ikb_offline_course',
+           'ikb_my_course_navigation', 'ikb_online_course', 'ikb_individual',
+           'create_ikb_notification', 'ikb_links']
