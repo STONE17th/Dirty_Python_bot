@@ -12,7 +12,7 @@ from loader import dp, bot, user_db
 async def start_command(_, admin: bool, msg: MsgToDict):
     poster = PICTURES.get('start_poster')
     user_db.check(msg.my_id, msg.name)
-    desc = f'Привет, {msg.name}!'
+    desc = f'Привет, уважаемый {msg.name}!'
     try:
         await bot.edit_message_media(media=InputMediaPhoto(media=poster, caption=desc),
                                      chat_id=msg.chat_id, message_id=msg.message_id,
