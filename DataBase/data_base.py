@@ -3,7 +3,7 @@ import sqlite3
 
 class DataBase:
 
-    def __init__(self, db_path: str = 'DataBase/dirty_db.db'):
+    def __init__(self, db_path: str = 'DataBase/dp_bot_db.db'):
         self.db_path = db_path
 
     @property
