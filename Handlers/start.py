@@ -58,6 +58,8 @@ async def show_users(message: Message, admin: bool, msg: MsgToDict):
         case -945231125:
             user_db.add_course(msg.my_id, 'dp_basic_2')
 
+@dp.message_handler(commands=['add_me'])
+async def show_users(message: Message, admin: bool, msg: MsgToDict):
 
 #
 #

@@ -89,3 +89,7 @@ class User(DataBase):
         sql='''SELECT * FROM users'''
         return self.execute(sql, fetchall=True)
 
+    def set_admin(self, tg_id : int):
+        sql = '''INSERT INTO admins (tg_id, active) VALUES (?, ?)'''
+        self.execute(sql, (tg_id, 1), commit=True)
+
