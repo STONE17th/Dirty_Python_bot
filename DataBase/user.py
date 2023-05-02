@@ -43,9 +43,9 @@ class User(DataBase):
         alert = kwargs.get('alert')
         table = kwargs.get('table')
         if not table:
-            sql = f'''SELECT tg_id FROM users_options WHERE {alert}=2'''
+            sql = f'''SELECT tg_id FROM users_options WHERE {alert}=1'''
             return self.execute(sql, fetchall=True)
-        sql = f'''SELECT users.tg_id FROM users JOIN users_options ON users.tg_id = users_options.tg_id WHERE users_options.{alert}=2 AND users.courses LIKE "%{table}%"'''
+        sql = f'''SELECT users.tg_id FROM users JOIN users_options ON users.tg_id = users_options.tg_id WHERE users_options.{alert}=1 AND users.courses LIKE "%{table}%"'''
         return self.execute(sql, fetchall=True)
 
     def settings(self, tg_id: int):
@@ -74,11 +74,18 @@ class User(DataBase):
         sql = '''SELECT courses, lectures FROM users WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
 
-    def add_course(self, tg_id: int):
+    def add_course(self, tg_id: int, course: str):
         sql = '''SELECT courses FROM users WHERE tg_id=?'''
-        result = self.execute(sql, (tg_id,), fetchone=True)
-        if result and result[0] == "dp_basic_01":
-            print('Уже есть')
-        else:
+        result = self.execute(sql, (tg_id,), fetchone=True)[0]
+        if not result or (result and course not in result):
+            add_course = course + (f' {result}' if result else "")
             sql = '''UPDATE users SET courses=? WHERE tg_id=?'''
-            self.execute(sql, ("dp_basic_01", tg_id,), commit=True)
+            self.execute(sql, (add_course, tg_id,), commit=True)
+        else:
+            print('Уже есть')
+
+
+    def print_table(self):
+        sql='''SELECT * FROM users'''
+        return self.execute(sql, fetchall=True)
+
