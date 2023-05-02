@@ -78,7 +78,7 @@ async def start_catch(message: Message, state: FSMContext):
 async def confirm_new_course(message: Message, state: FSMContext):
     await state.update_data({'start_date': message.text})
     data = await state.get_data()
-    caption = f"Название: {data.get('name')}\n\nНазвание таблицы: {data.get('name')}\n\n" \
+    caption = f"Название: {data.get('name')}\n\nНазвание таблицы: {data.get('table')}\n\n" \
               f"Продолжительность: {data.get('quantity')}\n\n" \
               f"Описание: {data.get('desc')}\n\nРабочая папка: {data.get('url')}\n" \
               f"Телеграм-чат: {data.get('tg_chat')}\n\nЦена курса: " \
@@ -97,7 +97,7 @@ async def save_new_course(call: CallbackQuery, state: FSMContext):
         caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot'
         poster = data.get('poster')
         message = (caption, poster)
-        await user_distribution('courses', message)
+        # await user_distribution('courses', message)
         await user_distribution('news', message, True)
     else:
         await call.answer('Отмена')

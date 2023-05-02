@@ -46,18 +46,17 @@ async def show_users(_, admin: bool):
 
 @dp.message_handler(commands=['add_me'])
 async def show_users(message: Message, admin: bool, msg: MsgToDict):
-    if admin:
-        match message.chat.id:
-            case -1001609984559:
-                user_db.add_course(msg.my_id, 'botboys_2')
-            case -807558507:
-                user_db.add_course(msg.my_id, 'botboys_3')
-            case -1001972599000:
-                user_db.add_course(msg.my_id, 'botboys_4')
-            case -644165245:
-                user_db.add_course(msg.my_id, 'dp_basic_01')
-            case -945231125:
-                user_db.add_course(msg.my_id, 'dp_basic_2')
+    match message.chat.id:
+        case -1001609984559:
+            user_db.add_course(msg.my_id, 'botboys_2')
+        case -807558507:
+            user_db.add_course(msg.my_id, 'botboys_3')
+        case -1001972599000:
+            user_db.add_course(msg.my_id, 'botboys_4')
+        case -644165245:
+            user_db.add_course(msg.my_id, 'dp_basic_01')
+        case -945231125:
+            user_db.add_course(msg.my_id, 'dp_basic_2')
 
 
 #
