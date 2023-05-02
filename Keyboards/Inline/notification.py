@@ -1,47 +1,28 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton as IKB
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton as InKB
 
 from Keyboards.Callback import main_menu
 
 
-def create_ikb_notification() -> InlineKeyboardMarkup:
-    ikb_notification = InlineKeyboardMarkup(row_width=2)
-    btn_stream = IKB(text='Стрим', callback_data=main_menu.new(menu='', button='back'))
-    btn_news = IKB(text='Новость', callback_data=main_menu.new(menu='', button='back'))
-    btn_back = IKB(text='Назад', callback_data=main_menu.new(menu='', button='back'))
-    ikb_notification.row(btn_stream, btn_news)
-    ikb_notification.add(btn_back)
-    return ikb_notification
+def ikb_notification() -> InlineKeyboardMarkup:
+    keyboard_notification = InlineKeyboardMarkup(row_width=2)
+    btn_stream = InKB(text='Стрим', callback_data=main_menu.new(menu='', button='stream'))
+    btn_news = InKB(text='Новость', callback_data=main_menu.new(menu='', button='news'))
+    btn_back = InKB(text='Назад', callback_data=main_menu.new(menu='', button='back'))
+    keyboard_notification.row(btn_stream, btn_news)
+    keyboard_notification.add(btn_back)
+    return keyboard_notification
 
 
-# def create_ikb_list_navigation(menu: str, admin: bool, task_type: str, task_level: str, curr_id: int,
-#                                list_size: int) -> InlineKeyboardMarkup:
-#     ikb_navigation = InlineKeyboardMarkup(row_width=1)
-#     prev_id = int(curr_id - 1) if curr_id != 0 else int(list_size - 1)
-#     next_id = int(curr_id + 1) if curr_id != (list_size - 1) else 0
-#     btn_prev = IKB(text='<<<',
-#                    callback_data=list_navigation.new(menu=menu,
-#                                                      task_type=task_type,
-#                                                      task_level=task_level,
-#                                                      current_id=prev_id))
-#     btn_next = IKB(text='>>>',
-#                    callback_data=list_navigation.new(menu=menu,
-#                                                      task_type=task_type,
-#                                                      task_level=task_level,
-#                                                      current_id=next_id))
-#     btn_back = IKB(text='Назад',
-#                    callback_data=list_navigation.new(menu='type',
-#                                                      task_type=task_type,
-#                                                      task_level='',
-#                                                      current_id=0))
-#     btn_task_delete = IKB(text='Удалить задачу',
-#                           callback_data=list_navigation.new(menu='task_delete',
-#                                                             task_type=task_type,
-#                                                             task_level=task_level,
-#                                                             current_id=curr_id))
-#     if list_size > 1:
-#         ikb_navigation.add(btn_prev, btn_next)
-#     if admin:
-#         ikb_navigation.add(btn_task_delete, btn_back)
-#     else:
-#         ikb_navigation.add(btn_back)
-#     return ikb_navigation
+def ikb_user_notification(menu: str, url: str) -> InlineKeyboardMarkup:
+    keyboard_user = InlineKeyboardMarkup(row_width=2)
+    match menu:
+        case 'stream':
+            btn_main = InKB(text='Go на cтрим!', url=url)
+        case 'courses':
+            btn_main = InKB(text='Перейти', callback_data=main_menu.new(menu='main', button='my_courses'))
+        case 'news':
+            btn_main = InKB(text=('Перейти' if url else 'Закрепить'),
+                            callback_data=main_menu.new(menu='main', button=('all_courses' if url else 'pin_news')))
+    btn_delete = InKB(text='Удалить', callback_data=main_menu.new(menu='', button='message_delete'))
+    keyboard_user.row(btn_main, btn_delete)
+    return keyboard_user

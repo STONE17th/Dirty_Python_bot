@@ -1,7 +1,5 @@
 from loader import settings_db, PICTURES
 
-admin = ['409205647']
-
 
 def load_settings():
     data = settings_db.load(type_set='poster')

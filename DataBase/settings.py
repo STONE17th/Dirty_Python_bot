@@ -1,4 +1,4 @@
-from DataBase import DataBase
+from .data_base import DataBase
 
 
 class Settings(DataBase):
@@ -24,4 +24,6 @@ class Settings(DataBase):
             sql = f'''REPLACE INTO settings (name, value, type_set) VALUES (?, ?, ?)'''
             self.execute(sql, params, commit=True)
 
-
+    def select_url(self, name: str) -> tuple:
+        sql = '''SELECT value FROM settings WHERE option_one=?'''
+        return self.execute(sql, (name,), fetchone=True)[0]

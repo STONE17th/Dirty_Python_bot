@@ -17,13 +17,13 @@ def ikb_settings(msg: MsgToDict) -> InlineKeyboardMarkup:
 
     keyboard_settings = InlineKeyboardMarkup(row_width=2)
     *_, stream, courses, news = user_db.settings(msg.my_id)
-    btn_alert_list = [('Стримы: ', on if stream == 1 else off, 'stream'),
-                      ('Мои курсы: ', on if courses == 1 else off, 'courses'),
-                      ('Новости: ', on if news == 1 else off, 'news')]
+    btn_alert_list = [(':Стримы', on if stream == 1 else off, 'stream'),
+                      (':Мои курсы', on if courses == 1 else off, 'courses'),
+                      (':Новости', on if news == 1 else off, 'news')]
 
     btn_back = InKB(text='Назад', callback_data=main_menu.new(menu='main', button='back'))
 
-    keyboard_settings.row(*[InKB(text=f'{text}{switch}', callback_data=crt_cb(button))
+    keyboard_settings.row(*[InKB(text=f'{switch}{text}', callback_data=crt_cb(button))
                             for text, switch, button in btn_alert_list])
 
     if adm := user_db.is_admin(msg.my_id):

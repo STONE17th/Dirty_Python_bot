@@ -13,7 +13,7 @@ async def purchase(_, msg: MsgToDict):
         target_lecture = Course(course_db.select(msg.table))
         merchandise = msg.table
     else:
-        target_lecture = Lecture(lecture_db.select(msg.table, msg.id))
+        target_lecture = Lecture(lecture_db.select(msg.table, msg.id), msg.table)
         merchandise = f'{msg.table}:{msg.id}'
     prices = [LabeledPrice(label=target_lecture.name, amount=target_lecture.price * 100)]
 

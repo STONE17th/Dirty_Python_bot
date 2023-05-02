@@ -1,4 +1,4 @@
-from DataBase import DataBase
+from .data_base import DataBase
 
 
 class Task(DataBase):

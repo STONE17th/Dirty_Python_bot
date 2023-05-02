@@ -1,8 +1,8 @@
-from .data_base import DataBase
 from .course import Course
 from .lecture import Lecture
-from .user import User
-from .task import Task
 from .settings import Settings
+from .task import Task
+from .user import User
 
-__all__ = ['DataBase', 'Course', 'Lecture', 'User', 'Task', 'Settings']
+__all__ = ['Course', 'Lecture',
+           'User', 'Task', 'Settings']

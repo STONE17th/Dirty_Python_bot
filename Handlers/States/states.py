@@ -33,6 +33,7 @@ class NewTask(StatesGroup):
 
 class Stream(StatesGroup):
     name = State()
+    date_time = State()
     desc = State()
     poster = State()
     url = State()

@@ -23,7 +23,7 @@ class Course:
 
     def info(self):
         completed = course_db.done(self.table)
-        finalize = f'{round((completed[1] - completed[0]) / completed[1], 2) * 100}% ({len(self.lectures) - len(completed)}/{len(self.lectures)})'
+        finalize = f'{round(completed[0] / completed[1], 2) * 100}% ({completed[0]}/{completed[1]})'
         return f'Название курса {self.name}\n\nОписание: {self.desc}\n\n' \
                f'Стоимость всего курса: {self.price}\nДата старта: {self.start}\nКурс завершен на {finalize}'
 

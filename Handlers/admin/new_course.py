@@ -94,10 +94,11 @@ async def save_new_course(call: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         course_db.add(data)
         await call.answer(f'Курс {data.get("name")} добавлен в БД')
-        caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot\n' \
-                  f'Если не хочешь получать уведомления о курсах и лекциях - '\
-                  f'можешь отключить уведомления в настройках'
-        await user_distribution('courses', caption)
+        caption = f'Курс {data.get("name")} добавлен в список Dirty Python Bot'
+        poster = data.get('poster')
+        message = (caption, poster)
+        await user_distribution('courses', message)
+        await user_distribution('news', message, True)
     else:
         await call.answer('Отмена')
 

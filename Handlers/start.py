@@ -1,9 +1,10 @@
 from aiogram.types import Message, InputMediaPhoto
-from aiogram.utils.exceptions import MessageCantBeEdited
+from aiogram.utils.exceptions import MessageCantBeEdited, MessageCantBeDeleted
+
 from Keyboards import ikb_start
-from Keyboards.Callback import main_menu, settings
+from Keyboards.Callback import main_menu
 from Misc import MsgToDict, PICTURES
-from loader import dp, bot, user_db, course_db
+from loader import dp, bot, user_db
 
 
 @dp.callback_query_handler(main_menu.filter(button='back'))
@@ -21,18 +22,20 @@ async def start_command(_, admin: bool, msg: MsgToDict):
                              reply_markup=ikb_start(admin))
 
 
-@dp.message_handler(commands=['check'])
-async def start_command(message: Message):
-    print(course_db.done('botboys_2'))
-    print(course_db.done('botboys_3'))
-    print(course_db.done('botboys_4'))
-    # def crt_cb(button: str):
-    #     return settings.new(menu='settings', button=button)
-    # print(type(crt_cb('button')))
+@dp.callback_query_handler(main_menu.filter(button='message_delete'))
+async def start_command(_, msg: MsgToDict):
+    try:
+        await bot.delete_message(chat_id=msg.chat_id, message_id=msg.message_id)
+    except MessageCantBeDeleted:
+        pass
 
 
-@dp.message_handler(content_types='photo')
-async def request_to_admin(message: Message):
-    await message.answer(message.photo[0].file_id)
-
-# Этот коммит с ПК
+# @dp.message_handler(commands=['add_course'])
+# async def start_command(message: Message, msg: MsgToDict):
+#     user_db.check(msg.my_id, msg.name)
+#     user_db.add_course(message.from_user.id)
+#
+#
+# @dp.message_handler(content_types='photo')
+# async def request_to_admin(message: Message):
+#     await message.answer(message.photo[0].file_id)

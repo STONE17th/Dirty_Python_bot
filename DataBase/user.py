@@ -1,4 +1,4 @@
-from DataBase import DataBase
+from .data_base import DataBase
 
 
 class User(DataBase):
@@ -29,7 +29,7 @@ class User(DataBase):
             new_user = (tg_id, user_name)
             sql = '''INSERT INTO users (tg_id, name) VALUES (?, ?)'''
             self.execute(sql, new_user, commit=True)
-            options = (tg_id, 'True', 'True', 'True')
+            options = (tg_id, 1, 1, 1)
             sql = '''INSERT INTO users_options (tg_id, alerts_stream, alerts_courses, 
                     alerts_news) VALUES (?, ?, ?, ?)'''
             self.execute(sql, options, commit=True)
@@ -43,11 +43,10 @@ class User(DataBase):
         alert = kwargs.get('alert')
         table = kwargs.get('table')
         if not table:
-            sql = f'''SELECT tg_id FROM users_options WHERE {alert}="True"'''
+            sql = f'''SELECT tg_id FROM users_options WHERE {alert}=2'''
             return self.execute(sql, fetchall=True)
-        sql = f'''SELECT users.tg_id FROM users JOIN users_options ON users.tg_id = users_options.tg_id WHERE users_options.{alert}="True" AND users.courses LIKE "%{table}%"'''
+        sql = f'''SELECT users.tg_id FROM users JOIN users_options ON users.tg_id = users_options.tg_id WHERE users_options.{alert}=2 AND users.courses LIKE "%{table}%"'''
         return self.execute(sql, fetchall=True)
-
 
     def settings(self, tg_id: int):
         sql = '''SELECT * FROM users_options WHERE tg_id=?'''
@@ -74,3 +73,12 @@ class User(DataBase):
     def course_and_lectures(self, tg_id: int) -> tuple[str]:
         sql = '''SELECT courses, lectures FROM users WHERE tg_id=?'''
         return self.execute(sql, (tg_id,), fetchone=True)
+
+    def add_course(self, tg_id: int):
+        sql = '''SELECT courses FROM users WHERE tg_id=?'''
+        result = self.execute(sql, (tg_id,), fetchone=True)
+        if result and result[0] == "dp_basic_01":
+            print('Уже есть')
+        else:
+            sql = '''UPDATE users SET courses=? WHERE tg_id=?'''
+            self.execute(sql, ("dp_basic_01", tg_id,), commit=True)
